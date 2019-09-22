@@ -9,10 +9,11 @@
 // INCLUDES //
 //////////////
 #include <d3d11.h>
-#include <d3dx10math.h>
+#include <DirectXMath.h>
 #include <d3dx11async.h>
 #include <fstream>
-using namespace std;
+
+using namespace DirectX;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,28 +24,28 @@ class WaterShaderClass
 private:
 	struct MatrixBufferType
 	{
-		D3DXMATRIX world;
-		D3DXMATRIX view;
-		D3DXMATRIX projection;
-		D3DXMATRIX reflection;
+		XMMATRIX world;
+		XMMATRIX view;
+		XMMATRIX projection;
+		XMMATRIX reflection;
 	};
 
 	struct CamNormBufferType
 	{
-		D3DXVECTOR3 cameraPosition;
+		XMFLOAT3 cameraPosition;
 		float padding1;
-		D3DXVECTOR2 normalMapTiling;
-		D3DXVECTOR2 padding2;
+		XMFLOAT2 normalMapTiling;
+		XMFLOAT2 padding2;
 	};
 
 	struct WaterBufferType
 	{
-		D3DXVECTOR4 refractionTint;
-		D3DXVECTOR3 lightDirection;
+		XMFLOAT4 refractionTint;
+		XMFLOAT3 lightDirection;
 		float waterTranslation;
 		float reflectRefractScale;
 		float specularShininess;
-		D3DXVECTOR2 padding;
+		XMFLOAT2 padding;
 	};
 
 public:
@@ -57,16 +58,16 @@ public:
 
 	bool Initialize(ID3D11Device*, HWND);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, ID3D11ShaderResourceView*, ID3D11ShaderResourceView*,
-		ID3D11ShaderResourceView*, D3DXVECTOR3, D3DXVECTOR2, float, float, D3DXVECTOR4, D3DXVECTOR3, float);
+	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, ID3D11ShaderResourceView*,
+		ID3D11ShaderResourceView*, XMFLOAT3, XMFLOAT2, float, float, XMFLOAT4, XMFLOAT3, float);
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 	void ShutdownShader();
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
-	bool SetShaderParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, ID3D11ShaderResourceView*, ID3D11ShaderResourceView*,
-		ID3D11ShaderResourceView*, D3DXVECTOR3, D3DXVECTOR2, float, float, D3DXVECTOR4, D3DXVECTOR3, float);
+	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, ID3D11ShaderResourceView*,
+		ID3D11ShaderResourceView*, XMFLOAT3, XMFLOAT2, float, float, XMFLOAT4, XMFLOAT3, float);
 	void RenderShader(ID3D11DeviceContext*, int);
 
 private:

@@ -9,9 +9,10 @@
 // INCLUDES //
 //////////////
 #include <d3d11.h>
-#include <d3dx10math.h>
+#include <DirectXMath.h>
 #include <stdio.h>
 
+using namespace DirectX;
 
 ///////////////////////
 // MY CLASS INCLUDES //
@@ -33,10 +34,10 @@ class TerrainClass
 private:
 	struct VertexType
 	{
-		D3DXVECTOR3 position;
-		D3DXVECTOR2 texture;
-		D3DXVECTOR3 normal;
-		D3DXVECTOR4 color;
+		XMFLOAT3 position;
+		XMFLOAT2 texture;
+		XMFLOAT3 normal;
+		XMFLOAT4 color;
 	};
 
 	struct HeightMapType

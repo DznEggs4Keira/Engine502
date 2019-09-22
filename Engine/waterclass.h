@@ -9,7 +9,9 @@
 // INCLUDES //
 //////////////
 #include <d3d11.h>
-#include <d3dx10math.h>
+#include <DirectXMath.h>
+
+using namespace DirectX;
 
 
 ///////////////////////
@@ -26,8 +28,8 @@ class WaterClass
 private:
 	struct VertexType
 	{
-		D3DXVECTOR3 position;
-		D3DXVECTOR2 texture;
+		XMFLOAT3 position;
+		XMFLOAT2 texture;
 	};
 
 public:
@@ -44,10 +46,10 @@ public:
 	ID3D11ShaderResourceView* GetTexture();
 
 	float GetWaterHeight();
-	D3DXVECTOR2 GetNormalMapTiling();
+	XMFLOAT2 GetNormalMapTiling();
 	float GetWaterTranslation();
 	float GetReflectRefractScale();
-	D3DXVECTOR4 GetRefractionTint();
+	XMFLOAT4 GetRefractionTint();
 	float GetSpecularShininess();
 
 private:
@@ -63,10 +65,10 @@ private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;
 	TextureClass* m_Texture;
-	D3DXVECTOR2 m_normalMapTiling;
+	XMFLOAT2 m_normalMapTiling;
 	float m_waterTranslation;
 	float m_reflectRefractScale;
-	D3DXVECTOR4 m_refractionTint;
+	XMFLOAT4 m_refractionTint;
 	float m_specularShininess;
 };
 

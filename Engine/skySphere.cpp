@@ -43,10 +43,10 @@ bool skySphere::Initialize(ID3D11Device* device, WCHAR* textureFilename)
 	}
 
 	// Set the color at the top of the sky dome.
-	m_apexColor = D3DXVECTOR4(0.12f, 0.46f, 0.90f, 1.0f);
+	m_apexColor = XMFLOAT4(0.12f, 0.46f, 0.90f, 1.0f);
 
 	// Set the color at the center of the sky dome.
-	m_centerColor = D3DXVECTOR4(1.0f, 0.74f, 0.30f, 0.5f);
+	m_centerColor = XMFLOAT4(1.0f, 0.74f, 0.30f, 0.5f);
 
 	return true;
 }
@@ -83,19 +83,19 @@ ID3D11ShaderResourceView* skySphere::GetTexture()
 	return m_Texture->GetTexture();
 }
 
-D3DXVECTOR4 skySphere::GetApexColor()
+XMFLOAT4 skySphere::GetApexColor()
 {
 	return m_apexColor;
 }
 
-D3DXVECTOR4 skySphere::GetCenterColor()
+XMFLOAT4 skySphere::GetCenterColor()
 {
 	return m_centerColor;
 }
 
 bool skySphere::LoadSkySphere(char* filename)
 {
-	ifstream fin;
+	std::ifstream fin;
 	char input;
 	int i;
 
@@ -190,7 +190,7 @@ bool skySphere::InitializeBuffers(ID3D11Device* device)
 	// Load the vertex array and index array with data.
 	for (i = 0; i < m_vertexCount; i++)
 	{
-		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
+		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
 		indices[i] = i;
 	}
 

@@ -128,10 +128,10 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 	m_viewport.TopLeftY = 0.0f;
 
 	// Setup the projection matrix.
-	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, ((float)D3DX_PI / 4.0f), ((float)textureWidth / (float)textureHeight), screenNear, screenDepth);
+	m_projectionMatrix = XMMatrixPerspectiveFovLH(((float)XM_PI / 4.0f), ((float)textureWidth / (float)textureHeight), screenNear, screenDepth);
 
 	// Create an orthographic projection matrix for 2D rendering.
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)textureWidth, (float)textureHeight, screenNear, screenDepth);
+	m_orthoMatrix = XMMatrixOrthographicLH((float)textureWidth, (float)textureHeight, screenNear, screenDepth);
 
 	return true;
 }
@@ -212,15 +212,13 @@ ID3D11ShaderResourceView* RenderTextureClass::GetShaderResourceView()
 }
 
 
-void RenderTextureClass::GetProjectionMatrix(D3DXMATRIX& projectionMatrix)
+XMMATRIX RenderTextureClass::GetProjectionMatrix()
 {
-	projectionMatrix = m_projectionMatrix;
-	return;
+	return m_projectionMatrix;
 }
 
 
-void RenderTextureClass::GetOrthoMatrix(D3DXMATRIX& orthoMatrix)
+XMMATRIX RenderTextureClass::GetOrthoMatrix()
 {
-	orthoMatrix = m_orthoMatrix;
-	return;
+	return m_orthoMatrix;
 }

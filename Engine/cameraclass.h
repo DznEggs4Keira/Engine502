@@ -20,25 +20,25 @@ public:
 	void SetPosition(float, float, float);
 	void SetRotation(float, float, float);
 
-	D3DXVECTOR3 GetPosition();
-	D3DXVECTOR3 GetRotation();
+	XMFLOAT3 GetPosition();
+	XMFLOAT3 GetRotation();
 
-	void RotateCamera(D3DXVECTOR3);
-	void MoveCamera(D3DXVECTOR3);
+	void RotateCamera(XMFLOAT3);
+	void MoveCamera(XMFLOAT3);
 
 	void Render();
-	void GetViewMatrix(D3DXMATRIX&);
+	XMMATRIX GetViewMatrix();
 
 	void RenderReflection(float);
-	void GetReflectionViewMatrix(D3DXMATRIX&);
+	XMMATRIX GetReflectionViewMatrix();
 
 private:
 
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;
-	D3DXMATRIX m_viewMatrix;
-	D3DXMATRIX rotationMatrix;
-	D3DXMATRIX m_reflectionViewMatrix;
+	XMMATRIX m_viewMatrix;
+	XMMATRIX rotationMatrix;
+	XMMATRIX m_reflectionViewMatrix;
 };
 
 #endif

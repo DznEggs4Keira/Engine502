@@ -4,26 +4,24 @@
 
 
 // INCLUDES 
-
 #include <d3d11.h>
-#include <d3dx10math.h>
+#include <DirectXMath.h>
 #include <fstream>
 
-//not good practice
-using namespace std;
+using namespace DirectX;
+
 
 // MY CLASS INCLUDES 
 #include "textureclass.h"
-
 
 class ModelClass
 {
 private:
 	struct VertexType
 	{
-		D3DXVECTOR3 position;
-	    D3DXVECTOR2 texture;
-		D3DXVECTOR3 normal;
+		XMFLOAT3 position;
+		XMFLOAT2 texture;
+		XMFLOAT3 normal;
 	};
 
 	struct ModelType

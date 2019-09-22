@@ -51,11 +51,11 @@ void WaterShaderClass::Shutdown()
 }
 
 
-bool WaterShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix,
-	D3DXMATRIX projectionMatrix, D3DXMATRIX reflectionMatrix, ID3D11ShaderResourceView* refractionTexture,
-	ID3D11ShaderResourceView* reflectionTexture, ID3D11ShaderResourceView* normalTexture, D3DXVECTOR3 cameraPosition,
-	D3DXVECTOR2 normalMapTiling, float waterTranslation, float reflectRefractScale, D3DXVECTOR4 refractionTint,
-	D3DXVECTOR3 lightDirection, float specularShininess)
+bool WaterShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+	XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView* refractionTexture,
+	ID3D11ShaderResourceView* reflectionTexture, ID3D11ShaderResourceView* normalTexture, XMFLOAT3 cameraPosition,
+	XMFLOAT2 normalMapTiling, float waterTranslation, float reflectRefractScale, XMFLOAT4 refractionTint,
+	XMFLOAT3 lightDirection, float specularShininess)
 {
 	bool result;
 
@@ -311,7 +311,7 @@ void WaterShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 {
 	char* compileErrors;
 	unsigned long bufferSize, i;
-	ofstream fout;
+	std::ofstream fout;
 
 
 	// Get a pointer to the error message text buffer.
@@ -343,11 +343,11 @@ void WaterShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 }
 
 
-bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,
-	D3DXMATRIX reflectionMatrix, ID3D11ShaderResourceView* refractionTexture,
+bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView* refractionTexture,
 	ID3D11ShaderResourceView* reflectionTexture, ID3D11ShaderResourceView* normalTexture,
-	D3DXVECTOR3 cameraPosition, D3DXVECTOR2 normalMapTiling, float waterTranslation, float reflectRefractScale,
-	D3DXVECTOR4 refractionTint, D3DXVECTOR3 lightDirection, float specularShininess)
+	XMFLOAT3 cameraPosition, XMFLOAT2 normalMapTiling, float waterTranslation, float reflectRefractScale,
+	XMFLOAT4 refractionTint, XMFLOAT3 lightDirection, float specularShininess)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -358,10 +358,10 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D
 
 
 	// Transpose all the input matrices to prepare them for the shader.
-	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
-	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
-	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
-	D3DXMatrixTranspose(&reflectionMatrix, &reflectionMatrix);
+	worldMatrix = XMMatrixTranspose(worldMatrix);
+	viewMatrix = XMMatrixTranspose(viewMatrix);
+	projectionMatrix = XMMatrixTranspose(projectionMatrix);
+	reflectionMatrix = XMMatrixTranspose(reflectionMatrix);
 
 	// Lock the matrix constant buffer so it can be written to.
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -402,7 +402,7 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D
 	dataPtr2->cameraPosition = cameraPosition;
 	dataPtr2->padding1 = 0.0f;
 	dataPtr2->normalMapTiling = normalMapTiling;
-	dataPtr2->padding2 = D3DXVECTOR2(0.0f, 0.0f);
+	dataPtr2->padding2 = XMFLOAT2(0.0f, 0.0f);
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(m_camNormBuffer, 0);
@@ -434,7 +434,7 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D
 	dataPtr3->refractionTint = refractionTint;
 	dataPtr3->lightDirection = lightDirection;
 	dataPtr3->specularShininess = specularShininess;
-	dataPtr3->padding = D3DXVECTOR2(0.0f, 0.0f);
+	dataPtr3->padding = XMFLOAT2(0.0f, 0.0f);
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(m_waterBuffer, 0);

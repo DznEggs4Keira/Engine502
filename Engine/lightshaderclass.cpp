@@ -48,9 +48,9 @@ void LightShaderClass::Shutdown()
 }
 
 
-bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
-			D3DXMATRIX projectionMatrix , D3DXVECTOR3 lightDirection, D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor,
-		D3DXVECTOR3 cameraPosition, D3DXVECTOR4 specularColor, float specularPower,float deltavalue, ID3D11ShaderResourceView* texture)
+bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+	XMMATRIX projectionMatrix , XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower,float deltavalue, ID3D11ShaderResourceView* texture)
 {
 	bool result;
 
@@ -340,7 +340,7 @@ void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 {
 	char* compileErrors;
 	unsigned long bufferSize, i;
-	ofstream fout;
+	std::ofstream fout;
 
 
 	// Get a pointer to the error message text buffer.
@@ -372,10 +372,9 @@ void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 }
 
 
-bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
-						 D3DXMATRIX projectionMatrix, D3DXVECTOR3 lightDirection, D3DXVECTOR4 ambientColor,
-						 D3DXVECTOR4 diffuseColor, D3DXVECTOR3 cameraPosition, D3DXVECTOR4 specularColor,
-						 float specularPower, float deltavalue, ID3D11ShaderResourceView* texture)
+bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+	XMMATRIX projectionMatrix, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor,	XMFLOAT4 diffuseColor, XMFLOAT3 cameraPosition, 
+	XMFLOAT4 specularColor,	float specularPower, float deltavalue, ID3D11ShaderResourceView* texture)
 {
 	HRESULT result;
     D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -387,9 +386,9 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D
 
 
 	// Transpose the matrices to prepare them for the shader.
-	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
-	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
-	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
+	worldMatrix = XMMatrixTranspose(worldMatrix);
+	viewMatrix = XMMatrixTranspose(viewMatrix);
+	projectionMatrix = XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

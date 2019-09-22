@@ -5,13 +5,13 @@
 
 // INCLUDES
 #include <d3d11.h>
-#include <d3dx10math.h>
+#include <DirectXMath.h>
 #include <fstream>
 
 //my includes
 #include "textureclass.h"
 
-using namespace std;
+using namespace DirectX;
 
 
 class skySphere
@@ -26,7 +26,7 @@ private:
 
 	struct VertexType
 	{
-		D3DXVECTOR3 position;
+		XMFLOAT3 position;
 	};
 
 public:
@@ -40,8 +40,8 @@ public:
 
 	int GetIndexCount();
 
-	D3DXVECTOR4 GetApexColor();
-	D3DXVECTOR4 GetCenterColor();
+	XMFLOAT4 GetApexColor();
+	XMFLOAT4 GetCenterColor();
 
 	//get texture for cube map
 	ID3D11ShaderResourceView* GetTexture();
@@ -62,7 +62,7 @@ private:
 	ModelType* m_model;
 	int m_vertexCount, m_indexCount;
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
-	D3DXVECTOR4 m_apexColor, m_centerColor;
+	XMFLOAT4 m_apexColor, m_centerColor;
 	TextureClass* m_Texture;
 };
 #endif

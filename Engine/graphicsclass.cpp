@@ -492,7 +492,7 @@ bool GraphicsClass::Frame()
 	}
 
 	// Update the rotation variable each frame. --- for cube model
-	rotation += (float)D3DX_PI * 0.05f;
+	rotation += (float)XM_PI * 0.05f;
 	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
@@ -574,12 +574,12 @@ bool GraphicsClass::HandleInput(float frameTime)
 
 void GraphicsClass::RenderRefractionToTexture()
 {
-	D3DXVECTOR4 clipPlane;
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	XMFLOAT4 clipPlane;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 
 
 	// Setup a clipping plane based on the height of the water to clip everything above it to create a refraction.
-	clipPlane = D3DXVECTOR4(0.0f, -1.0f, 0.0f, m_Water->GetWaterHeight() + 0.1f);
+	clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, m_Water->GetWaterHeight() + 0.1f);
 
 	// Set the render target to be the refraction render to texture.
 	m_RefractionTexture->SetRenderTarget(m_D3D->GetDeviceContext());
@@ -591,9 +591,9 @@ void GraphicsClass::RenderRefractionToTexture()
 	m_Camera->Render();
 
 	// Get the matrices from the camera and d3d objects.
-	m_D3D->GetWorldMatrix(worldMatrix);
-	m_Camera->GetViewMatrix(viewMatrix);
-	m_D3D->GetProjectionMatrix(projectionMatrix);
+	worldMatrix = m_D3D->GetWorldMatrix();
+	viewMatrix = m_Camera->GetViewMatrix();
+	projectionMatrix = m_D3D->GetProjectionMatrix();
 
 	// Render the terrain using the reflection shader and the refraction clip plane to produce the refraction effect.
 	m_Terrain->Render(m_D3D->GetDeviceContext());
@@ -612,13 +612,13 @@ void GraphicsClass::RenderRefractionToTexture()
 
 void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 {
-	D3DXVECTOR4 clipPlane;
-	D3DXMATRIX reflectionViewMatrix, worldMatrix, projectionMatrix;
-	D3DXVECTOR3 cameraPosition;
+	XMFLOAT4 clipPlane;
+	XMMATRIX reflectionViewMatrix, worldMatrix, projectionMatrix;
+	XMFLOAT3 cameraPosition;
 
 
 	// Setup a clipping plane based on the height of the water to clip everything below it.
-	clipPlane = D3DXVECTOR4(0.0f, 1.0f, 0.0f, -m_Water->GetWaterHeight());
+	clipPlane = XMFLOAT4(0.0f, 1.0f, 0.0f, -m_Water->GetWaterHeight());
 
 	// Set the render target to be the reflection render to texture.
 	m_ReflectionTexture->SetRenderTarget(m_D3D->GetDeviceContext());
@@ -630,11 +630,11 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	m_Camera->RenderReflection(m_Water->GetWaterHeight());
 
 	// Get the camera reflection view matrix instead of the normal view matrix.
-	m_Camera->GetReflectionViewMatrix(reflectionViewMatrix);
+	reflectionViewMatrix = m_Camera->GetReflectionViewMatrix();
 
 	// Get the world and projection matrices from the d3d object.
-	m_D3D->GetWorldMatrix(worldMatrix);
-	m_D3D->GetProjectionMatrix(projectionMatrix);
+	worldMatrix = m_D3D->GetWorldMatrix();
+	projectionMatrix = m_D3D->GetProjectionMatrix();
 
 	// Get the position of the camera.
 	cameraPosition = m_Camera->GetPosition();
@@ -643,7 +643,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	cameraPosition.y = -cameraPosition.y + (m_Water->GetWaterHeight() * 2.0f);
 
 	// Translate the sky dome and sky plane to be centered around the reflected camera position.
-	D3DXMatrixTranslation(&worldMatrix, cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	worldMatrix = XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
 	// Turn off back face culling and the Z buffer.
 	m_D3D->TurnOffCulling();
@@ -659,7 +659,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	m_D3D->TurnZBufferOn();
 
 	// Reset the world matrix.
-	m_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = m_D3D->GetWorldMatrix();
 
 	// Render the terrain using the reflection view matrix and reflection clip plane.
 	m_Terrain->Render(m_D3D->GetDeviceContext());
@@ -667,7 +667,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_Terrain->GetTexture(), clipPlane);
 
 	// Reset the world matrix.
-	m_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = m_D3D->GetWorldMatrix();
 
 	m_Model->Render(m_D3D->GetDeviceContext());
 	m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
@@ -675,7 +675,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
 
 	// Reset the world matrix.
-	m_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = m_D3D->GetWorldMatrix();
 
 	m_Tree->Render(m_D3D->GetDeviceContext());
 	m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
@@ -693,11 +693,11 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 
 bool GraphicsClass::Render(float rotation, float deltavalue)
 {
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix;
-	D3DXMATRIX modelWorldMatrix, modelTranslateMatrix, modelScaleMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix;
+	XMMATRIX modelWorldMatrix, modelTranslateMatrix, modelScaleMatrix;
 
 	//for sky sphere
-	D3DXVECTOR3 cameraPosition;
+	XMFLOAT3 cameraPosition;
 
 	bool result;
 
@@ -716,11 +716,11 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	m_Camera->RenderReflection(m_Water->GetWaterHeight());
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	m_Camera->GetViewMatrix(viewMatrix);
-	m_D3D->GetWorldMatrix(worldMatrix);
-	m_D3D->GetWorldMatrix(modelWorldMatrix);
-	m_D3D->GetProjectionMatrix(projectionMatrix);
-	m_Camera->GetReflectionViewMatrix(reflectionViewMatrix);
+	viewMatrix = m_Camera->GetViewMatrix();
+	worldMatrix = m_D3D->GetWorldMatrix();
+	modelWorldMatrix = m_D3D->GetWorldMatrix();
+	projectionMatrix = m_D3D->GetProjectionMatrix();
+	reflectionViewMatrix = m_Camera->GetReflectionViewMatrix();
 
 	//Here is where we get the position of the camera and then translate our sky dome to be centered around the camera position.
 	//SKY SPHERE BARF
@@ -728,10 +728,10 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	cameraPosition = m_Camera->GetPosition();
 
 	// i'm hoping this squashes the sphere when rendereing through the skysphere shader
-	D3DXMatrixScaling(&modelScaleMatrix, 500.0f, 100.0f, 500.0f);
+	modelScaleMatrix = XMMatrixScaling(500.0f, 100.0f, 500.0f);
 	// Translate the sky sphere to be centered around the camera position.
-	D3DXMatrixTranslation(&modelTranslateMatrix, cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	D3DXMatrixMultiply(&worldMatrix, &modelScaleMatrix, &modelTranslateMatrix);
+	modelTranslateMatrix = XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	worldMatrix = XMMatrixMultiply(modelScaleMatrix, modelTranslateMatrix);
 
 	// Turn off back face culling.
 	m_D3D->TurnOffCulling();
@@ -757,7 +757,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	m_D3D->TurnZBufferOn();
 
 	// Reset the world matrix.
-	m_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = m_D3D->GetWorldMatrix();
 
 	// Render the terrain buffers.
 	m_Terrain->Render(m_D3D->GetDeviceContext());
@@ -773,11 +773,12 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	}
 
 	// Reset the world matrix.
-	m_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = m_D3D->GetWorldMatrix();
 
 	// Translate to the location of the water and render it.
-	D3DXMatrixTranslation(&modelTranslateMatrix, 40.0f, m_Water->GetWaterHeight(), 50.0f);
-	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &modelTranslateMatrix);
+
+	modelTranslateMatrix = XMMatrixTranslation(40.0f, m_Water->GetWaterHeight(), 50.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, modelTranslateMatrix);
 
 	//Render water
 	m_Water->Render(m_D3D->GetDeviceContext());
@@ -795,10 +796,10 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	}
 	
 	// Rotate the world matrix by the rotation value so that the sphere will spin.
-	//D3DXMatrixRotationY(&worldMatrix, rotationY);
-	D3DXMatrixRotationYawPitchRoll(&modelWorldMatrix, rotationY, rotationX, rotationZ);
-	D3DXMatrixTranslation(&modelTranslateMatrix, 50.0f, 10.0f, 50.0f);
-	D3DXMatrixMultiply(&modelWorldMatrix, &modelWorldMatrix, &modelTranslateMatrix);
+	//XMMATRIXRotationY(&worldMatrix, rotationY);
+	modelWorldMatrix = XMMatrixRotationRollPitchYaw(rotationX, rotationY, rotationZ);
+	modelTranslateMatrix = XMMatrixTranslation(50.0f, 10.0f, 50.0f);
+	modelWorldMatrix = XMMatrixMultiply(modelWorldMatrix, modelTranslateMatrix);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_Model->Render(m_D3D->GetDeviceContext());
@@ -815,15 +816,15 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	}
 
 	// Reset the world matrix.
-	m_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = m_D3D->GetWorldMatrix();
 
 	//render the second instance of model class called tree
 	m_Tree->Render(m_D3D->GetDeviceContext());
 
 	//Position the tree cube
-	D3DXMatrixTranslation(&modelTranslateMatrix, 100.0f, 5.0f, 80.0f);
-	D3DXMatrixScaling(&modelScaleMatrix, 4.0f, 4.0f, 4.0f);
-	D3DXMatrixMultiply(&worldMatrix, &modelScaleMatrix, &modelTranslateMatrix);
+	modelTranslateMatrix = XMMatrixTranslation(100.0f, 5.0f, 80.0f);
+	modelScaleMatrix = XMMatrixScaling(4.0f, 4.0f, 4.0f);
+	worldMatrix = XMMatrixMultiply(modelScaleMatrix, modelTranslateMatrix);
 
 	// Render the Tree cube using the light shader.
 	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Tree->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,

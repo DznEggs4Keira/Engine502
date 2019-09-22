@@ -55,7 +55,7 @@ bool WaterClass::Initialize(ID3D11Device* device, WCHAR* textureFilename, float 
 	m_reflectRefractScale = 0.03f; //0.03f
 
 	// Set the tint of the refraction.
-	m_refractionTint = D3DXVECTOR4(0.8f, 0.8f, 1.0f, 1.0f); //green
+	m_refractionTint = XMFLOAT4(0.8f, 0.8f, 1.0f, 1.0f); //green
 
 	// Set the specular shininess.
 	m_specularShininess = 200.0f;
@@ -116,7 +116,7 @@ float WaterClass::GetWaterHeight()
 }
 
 
-D3DXVECTOR2 WaterClass::GetNormalMapTiling()
+XMFLOAT2 WaterClass::GetNormalMapTiling()
 {
 	return m_normalMapTiling;
 }
@@ -134,7 +134,7 @@ float WaterClass::GetReflectRefractScale()
 }
 
 
-D3DXVECTOR4 WaterClass::GetRefractionTint()
+XMFLOAT4 WaterClass::GetRefractionTint()
 {
 	return m_refractionTint;
 }
@@ -177,23 +177,23 @@ bool WaterClass::InitializeBuffers(ID3D11Device* device, float waterRadius)
 
 	//might play around with them later to make a more water body like shape. it is just a rectangle right now
 	// Load the vertex array with data.
-	vertices[0].position = D3DXVECTOR3(-waterRadius + 5.0f, 0.0f, waterRadius - 3.0f);  // Top left.
-	vertices[0].texture = D3DXVECTOR2(0.0f, 0.0f);
+	vertices[0].position = XMFLOAT3(-waterRadius + 5.0f, 0.0f, waterRadius - 3.0f);  // Top left.
+	vertices[0].texture = XMFLOAT2(0.0f, 0.0f);
 
-	vertices[1].position = D3DXVECTOR3(waterRadius, 0.0f, waterRadius);  // Top right.
-	vertices[1].texture = D3DXVECTOR2(1.0f, 0.0f);
+	vertices[1].position = XMFLOAT3(waterRadius, 0.0f, waterRadius);  // Top right.
+	vertices[1].texture = XMFLOAT2(1.0f, 0.0f);
 
-	vertices[2].position = D3DXVECTOR3(-waterRadius + 5.0f, 0.0f, -waterRadius - 5.0f);  // Bottom left.
-	vertices[2].texture = D3DXVECTOR2(0.0f, 1.0f);
+	vertices[2].position = XMFLOAT3(-waterRadius + 5.0f, 0.0f, -waterRadius - 5.0f);  // Bottom left.
+	vertices[2].texture = XMFLOAT2(0.0f, 1.0f);
 
-	vertices[3].position = D3DXVECTOR3(-waterRadius + 5.0f, 0.0f, -waterRadius - 5.0f);  // Bottom left.
-	vertices[3].texture = D3DXVECTOR2(0.0f, 1.0f);
+	vertices[3].position = XMFLOAT3(-waterRadius + 5.0f, 0.0f, -waterRadius - 5.0f);  // Bottom left.
+	vertices[3].texture = XMFLOAT2(0.0f, 1.0f);
 
-	vertices[4].position = D3DXVECTOR3(waterRadius, 0.0f, waterRadius);  // Top right.
-	vertices[4].texture = D3DXVECTOR2(1.0f, 0.0f);
+	vertices[4].position = XMFLOAT3(waterRadius, 0.0f, waterRadius);  // Top right.
+	vertices[4].texture = XMFLOAT2(1.0f, 0.0f);
 
-	vertices[5].position = D3DXVECTOR3(waterRadius, 0.0f, -waterRadius - 5.0f);  // Bottom right.
-	vertices[5].texture = D3DXVECTOR2(1.0f, 1.0f);
+	vertices[5].position = XMFLOAT3(waterRadius, 0.0f, -waterRadius - 5.0f);  // Bottom right.
+	vertices[5].texture = XMFLOAT2(1.0f, 1.0f);
 
 	// Load the index array with data.
 	indices[0] = 0;

@@ -6,15 +6,18 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dx11.lib")
-#pragma comment(lib, "d3dx10.lib")
+//#pragma comment(lib, "d3dx10.lib") //may not need this one
 
 // INCLUDES
 
 #include <dxgi.h>
 #include <d3dcommon.h>
 #include <d3d11.h>
-#include <d3dx10math.h>
 
+#include <DirectXMath.h>
+
+
+using namespace DirectX;
 
 class D3DClass
 {
@@ -32,9 +35,9 @@ public:
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();
 
-	void GetProjectionMatrix(D3DXMATRIX&);
-	void GetWorldMatrix(D3DXMATRIX&);
-	void GetOrthoMatrix(D3DXMATRIX&);
+	XMMATRIX GetProjectionMatrix();
+	XMMATRIX GetWorldMatrix();
+	XMMATRIX GetOrthoMatrix();
 
 	void GetVideoCardInfo(char*, int&);
 
@@ -65,9 +68,9 @@ private:
 	ID3D11RasterizerState* m_rasterStateNoCulling;
 	ID3D11DepthStencilState* m_depthDisabledStencilState;
 
-	D3DXMATRIX m_projectionMatrix;
-	D3DXMATRIX m_worldMatrix;
-	D3DXMATRIX m_orthoMatrix;
+	XMMATRIX m_projectionMatrix;
+	XMMATRIX m_worldMatrix;
+	XMMATRIX m_orthoMatrix;
 
 	ID3D11RenderTargetView* m_renderTargetView;
 	D3D11_VIEWPORT m_viewport;
