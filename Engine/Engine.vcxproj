@@ -98,6 +98,7 @@
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="reflectionshaderclass.cpp" />
     <ClCompile Include="rendertextureclass.cpp" />
+    <ClCompile Include="ShaderManagerClass.cpp" />
     <ClCompile Include="skySphere.cpp" />
     <ClCompile Include="skySphereShader.cpp" />
     <ClCompile Include="Sound.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="Movement.h" />
     <ClInclude Include="reflectionshaderclass.h" />
     <ClInclude Include="rendertextureclass.h" />
+    <ClInclude Include="ShaderManagerClass.h" />
     <ClInclude Include="skySphere.h" />
     <ClInclude Include="skySphereShader.h" />
     <ClInclude Include="Sound.h" />

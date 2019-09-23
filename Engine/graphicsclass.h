@@ -3,23 +3,27 @@
 #define _GRAPHICSCLASS_H_
 
 // MY CLASS INCLUDES
+//Main
 #include "d3dclass.h"
 #include "cameraclass.h"
-#include "modelclass.h"
-#include "lightshaderclass.h"
 #include "lightclass.h"
 #include "inputclass.h"
+
+//Movement
 #include "Movement.h"
 #include "FrameTime.h"
-#include "skySphere.h"
-#include "skySphereShader.h"
-#include "terrainclass.h"
-#include "terrainshaderclass.h"
 
-#include "rendertextureclass.h"
-#include "reflectionshaderclass.h"
+//Models
 #include "waterclass.h"
-#include "watershaderclass.h"
+#include "terrainclass.h"
+#include "skySphere.h"
+#include "modelclass.h"
+
+//Shader
+#include "ShaderManagerClass.h"
+#include "rendertextureclass.h"
+
+
 
 // GLOBALS 
 const bool FULL_SCREEN = false;
@@ -49,23 +53,22 @@ private:
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	ModelClass* m_Model;
-	ModelClass* m_Tree;
-	LightShaderClass* m_LightShader;
-	LightShaderClass* m_TextureShader;
 	LightClass* m_Light;
 	InputClass* m_Input;
+
 	Movement* m_Movement;
 	FrameTime* m_Timer;
-	skySphere* m_SkySphere;
-	skySphereShader* m_SkySphereShader;
+
+	ModelClass* m_Model;
+	ModelClass* m_Tree;
 	TerrainClass* m_Terrain;
-	TerrainShaderClass* m_TerrainShader;
+	skySphere* m_SkySphere;
+	WaterClass* m_Water;
+
+	//one pointer for the shader manager class which will overwrite all the other seperate shader pointers 
+	ShaderManagerClass* m_ShaderManager;
 
 	RenderTextureClass *m_RefractionTexture, *m_ReflectionTexture;
-	ReflectionShaderClass* m_ReflectionShader;
-	WaterClass* m_Water;
-	WaterShaderClass* m_WaterShader;
 };
 
 #endif

@@ -9,9 +9,27 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Shader Files">
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b1ef4996-3231-464e-b1ff-d5989936cf0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Shader Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders\Headers">
+      <UniqueIdentifier>{201ac5ca-8bf1-446e-8164-683f19d3069b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Source">
+      <UniqueIdentifier>{e1578438-8ecf-475e-a11a-54d600c381fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{cc2a1f95-8bd5-4aad-8b18-d8536c43cf12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Headers">
+      <UniqueIdentifier>{a62faafd-a4b1-4793-bafb-7210d73fdb44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Source">
+      <UniqueIdentifier>{8d519da6-1c04-4eff-9bf6-25348def1ea5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,12 +45,6 @@
     <ClCompile Include="lightclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lightshaderclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="modelclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="systemclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,34 +54,13 @@
     <ClCompile Include="Sound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="skySphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="skySphereShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FrameTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Movement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="reflectionshaderclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="rendertextureclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="terrainclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="terrainshaderclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="waterclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="watershaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
@@ -77,6 +68,36 @@
     </ClCompile>
     <ClCompile Include="graphicsclass.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManagerClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lightshaderclass.cpp">
+      <Filter>Shaders\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="reflectionshaderclass.cpp">
+      <Filter>Shaders\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="skySphereShader.cpp">
+      <Filter>Shaders\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="terrainshaderclass.cpp">
+      <Filter>Shaders\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="watershaderclass.cpp">
+      <Filter>Shaders\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="modelclass.cpp">
+      <Filter>Models\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="skySphere.cpp">
+      <Filter>Models\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="terrainclass.cpp">
+      <Filter>Models\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="waterclass.cpp">
+      <Filter>Models\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,12 +113,6 @@
     <ClInclude Include="lightclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lightshaderclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="modelclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="systemclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -107,70 +122,79 @@
     <ClInclude Include="Sound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="skySphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="skySphereShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FrameTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Movement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="reflectionshaderclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="rendertextureclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="terrainclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="terrainshaderclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="waterclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="watershaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphicsclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderManagerClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lightshaderclass.h">
+      <Filter>Shaders\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="reflectionshaderclass.h">
+      <Filter>Shaders\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="skySphereShader.h">
+      <Filter>Shaders\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="terrainshaderclass.h">
+      <Filter>Shaders\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="watershaderclass.h">
+      <Filter>Shaders\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="modelclass.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="skySphere.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="terrainclass.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="waterclass.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lightVS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="lightPS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="skyVS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="skyPS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="reflectionPS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="reflectionVS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="terrainPS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="terrainVS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="waterPS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
     <None Include="waterVS.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Shaders\Shader Files</Filter>
     </None>
   </ItemGroup>
 </Project>

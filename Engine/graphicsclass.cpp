@@ -6,24 +6,21 @@ GraphicsClass::GraphicsClass()
 {
 	m_D3D = 0;
 	m_Camera = 0;
-	m_Model = 0;
-	m_Tree = 0;
-	m_LightShader = 0;
-	m_TextureShader = 0;
 	m_Light = 0;
 	m_Input = 0;
+
 	m_Movement = 0;
 	m_Timer = 0;
-	m_SkySphere = 0;
-	m_SkySphereShader = 0;
-	m_Terrain = 0;
-	m_TerrainShader = 0;
 
+	m_Model = 0;
+	m_Tree = 0;
+	m_SkySphere = 0;
+	m_Terrain = 0;
+	m_Water = 0;
+
+	m_ShaderManager = 0;
 	m_RefractionTexture = 0;
 	m_ReflectionTexture = 0;
-	m_ReflectionShader = 0;
-	m_Water = 0;
-	m_WaterShader = 0;
 }
 
 
@@ -87,18 +84,18 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	// Create the terrain shader object.
-	m_TerrainShader = new TerrainShaderClass;
-	if (!m_TerrainShader)
+	// Create the Shader Manager object.
+	m_ShaderManager = new ShaderManagerClass;
+	if (!m_ShaderManager)
 	{
 		return false;
 	}
 
-	// Initialize the terrain shader object.
-	result = m_TerrainShader->Initialize(m_D3D->GetDevice(), hwnd);
+	// Initialize theShader Manager object.
+	result = m_ShaderManager->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the terrain shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -156,21 +153,6 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	// Create the light shader  and texture object.
-	m_LightShader = new LightShaderClass;
-	if (!m_LightShader)
-	{
-		return false;
-	}
-
-	// Initialize the light shader object.
-	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
-		return false;
-	}
-
 	// Create the Tree object.
 	m_Tree = new ModelClass;
 	if (!m_Tree)
@@ -216,21 +198,6 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	// Create the sky sphere shader object.
-	m_SkySphereShader = new skySphereShader;
-	if (!m_SkySphereShader)
-	{
-		return false;
-	}
-
-	// Initialize the sky sphere shader object.
-	result = m_SkySphereShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the sky dome shader object.", L"Error", MB_OK);
-		return false;
-	}
-
 	//Setup render to textures for the refraction and reflection of the scene.
 
 	// Create the refraction render to texture object.
@@ -263,23 +230,6 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	//Create the reflection shader for rendering the refraction and the reflection.
-
-	// Create the reflection shader object.
-	m_ReflectionShader = new ReflectionShaderClass;
-	if (!m_ReflectionShader)
-	{
-		return false;
-	}
-
-	// Initialize the reflection shader object.
-	result = m_ReflectionShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the reflection shader object.", L"Error", MB_OK);
-		return false;
-	}
-
 	//Setup the WaterClass and WaterShaderClass objects.
 
 	// Create the water object.
@@ -297,21 +247,6 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	// Create the water shader object.
-	m_WaterShader = new WaterShaderClass;
-	if (!m_WaterShader)
-	{
-		return false;
-	}
-
-	// Initialize the water shader object.
-	result = m_WaterShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the water shader object.", L"Error", MB_OK);
-		return false;
-	}
-
 	return true;
 }
 
@@ -319,11 +254,11 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 void GraphicsClass::Shutdown()
 {
 	// Release the water shader object.
-	if (m_WaterShader)
+	if (m_ShaderManager)
 	{
-		m_WaterShader->Shutdown();
-		delete m_WaterShader;
-		m_WaterShader = 0;
+		m_ShaderManager->Shutdown();
+		delete m_ShaderManager;
+		m_ShaderManager = 0;
 	}
 
 	// Release the water object.
@@ -332,14 +267,6 @@ void GraphicsClass::Shutdown()
 		m_Water->Shutdown();
 		delete m_Water;
 		m_Water = 0;
-	}
-
-	// Release the reflection shader object.
-	if (m_ReflectionShader)
-	{
-		m_ReflectionShader->Shutdown();
-		delete m_ReflectionShader;
-		m_ReflectionShader = 0;
 	}
 
 	// Release the reflection render to texture object.
@@ -356,14 +283,6 @@ void GraphicsClass::Shutdown()
 		m_RefractionTexture->Shutdown();
 		delete m_RefractionTexture;
 		m_RefractionTexture = 0;
-	}
-
-	// Release the terrain shader object.
-	if (m_TerrainShader)
-	{
-		m_TerrainShader->Shutdown();
-		delete m_TerrainShader;
-		m_TerrainShader = 0;
 	}
 
 	//Release the terrain object.
@@ -388,14 +307,6 @@ void GraphicsClass::Shutdown()
 		m_Timer = 0;
 	}
 
-	// Release the sky dome shader object.
-	if (m_SkySphereShader)
-	{
-		m_SkySphereShader->Shutdown();
-		delete m_SkySphereShader;
-		m_SkySphereShader = 0;
-	}
-
 	// Release the sky dome object.
 	if (m_SkySphere)
 	{
@@ -404,27 +315,11 @@ void GraphicsClass::Shutdown()
 		m_SkySphere = 0;
 	}
 
-	// Release the texture shader object.
-	if (m_TextureShader)
-	{
-		m_TextureShader->Shutdown();
-		delete m_TextureShader;
-		m_TextureShader = 0;
-	}
-
 	// Release the light object.
 	if (m_Light)
 	{
 		delete m_Light;
 		m_Light = 0;
-	}
-
-	// Release the light shader object.
-	if (m_LightShader)
-	{
-		m_LightShader->Shutdown();
-		delete m_LightShader;
-		m_LightShader = 0;
 	}
 
 	// Release the model object.
@@ -597,7 +492,7 @@ void GraphicsClass::RenderRefractionToTexture()
 
 	// Render the terrain using the reflection shader and the refraction clip plane to produce the refraction effect.
 	m_Terrain->Render(m_D3D->GetDeviceContext());
-	m_ReflectionShader->Render(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	m_ShaderManager->RenderReflectionShader(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_Terrain->GetTexture(),
 		clipPlane);
 
@@ -651,7 +546,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 
 	// Render the sky dome using the reflection view matrix.
 	m_SkySphere->Render(m_D3D->GetDeviceContext());
-	m_SkySphereShader->Render(m_D3D->GetDeviceContext(), m_SkySphere->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+	m_ShaderManager->RenderSkySphereShader(m_D3D->GetDeviceContext(), m_SkySphere->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
 		m_SkySphere->GetApexColor(), m_SkySphere->GetCenterColor(), m_SkySphere->GetTexture());
 
 	// Enable back face culling.
@@ -663,14 +558,14 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 
 	// Render the terrain using the reflection view matrix and reflection clip plane.
 	m_Terrain->Render(m_D3D->GetDeviceContext());
-	m_ReflectionShader->Render(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+	m_ShaderManager->RenderReflectionShader(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
 		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_Terrain->GetTexture(), clipPlane);
 
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
 	m_Model->Render(m_D3D->GetDeviceContext());
-	m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+	m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
 
@@ -678,7 +573,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	worldMatrix = m_D3D->GetWorldMatrix();
 
 	m_Tree->Render(m_D3D->GetDeviceContext());
-	m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+	m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
 
@@ -742,7 +637,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	m_SkySphere->Render(m_D3D->GetDeviceContext());
 
 	// Render the sky sphere using the sky sphere shader.
-	result = m_SkySphereShader->Render(m_D3D->GetDeviceContext(), m_SkySphere->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	result = m_ShaderManager->RenderSkySphereShader(m_D3D->GetDeviceContext(), m_SkySphere->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_SkySphere->GetApexColor(), m_SkySphere->GetCenterColor(), m_SkySphere->GetTexture());
 
 	//check if sky sphere rendered successfully
@@ -763,7 +658,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	m_Terrain->Render(m_D3D->GetDeviceContext());
 
 	// Render the terrain using the terrain shader.
-	result = m_TerrainShader->Render(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	result = m_ShaderManager->RenderTerrainShader(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_Terrain->GetTexture());
 	
 	//check if terrain rendered successfully
@@ -784,7 +679,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	m_Water->Render(m_D3D->GetDeviceContext());
 
 	//using water shader
-	result = m_WaterShader->Render(m_D3D->GetDeviceContext(), m_Water->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
+	result = m_ShaderManager->RenderWaterShader(m_D3D->GetDeviceContext(), m_Water->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
 		m_RefractionTexture->GetShaderResourceView(), m_ReflectionTexture->GetShaderResourceView(), m_Water->GetTexture(),
 		m_Camera->GetPosition(), m_Water->GetNormalMapTiling(), m_Water->GetWaterTranslation(), m_Water->GetReflectRefractScale(),
 		m_Water->GetRefractionTint(), m_Light->GetDirection(), m_Water->GetSpecularShininess());
@@ -805,7 +700,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	m_Model->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the light shader.
-	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), modelWorldMatrix, viewMatrix, projectionMatrix,
+	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), modelWorldMatrix, viewMatrix, projectionMatrix,
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
 
@@ -827,7 +722,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	worldMatrix = XMMatrixMultiply(modelScaleMatrix, modelTranslateMatrix);
 
 	// Render the Tree cube using the light shader.
-	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Tree->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Tree->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
 
