@@ -23,7 +23,18 @@ bool TextureClass::Initialize(ID3D11Device* device, WCHAR* filename)
 	HRESULT result;
 
 	// Load the texture in.
-	result = D3DX11CreateShaderResourceViewFromFile(device, filename, NULL, NULL, &m_texture, NULL);
+
+	TexMetadata imageMetadata;
+	ScratchImage* pScratchImage = new ScratchImage();
+
+	result = LoadFromDDSFile(filename, DDS_FLAGS_NONE, &imageMetadata, *pScratchImage);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	result = CreateShaderResourceView(device, pScratchImage->GetImages(), 
+		pScratchImage->GetImageCount(), imageMetadata, &m_texture);
 	if(FAILED(result))
 	{
 		return false;
@@ -55,12 +66,25 @@ bool TextureClass::LoadCubeTexture(ID3D11Device* device, WCHAR* filename)
 {
 	HRESULT result;
 
-	D3DX11_IMAGE_LOAD_INFO loadSMInfo;
-	loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	//D3DX11_IMAGE_LOAD_INFO loadSMInfo;
+	//loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+	TexMetadata imageMetadata;
+	ScratchImage* pScratchImage = new ScratchImage();
+
+	result = LoadFromDDSFile(filename, TEX_MISC_TEXTURECUBE, &imageMetadata, *pScratchImage);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
 	ID3D11Texture2D* SMTexture = 0;
-	result = D3DX11CreateTextureFromFile(device, filename,
-		&loadSMInfo, NULL, (ID3D11Resource**)&SMTexture, NULL);
+	result = CreateTexture(device, pScratchImage->GetImages(),
+		pScratchImage->GetImageCount(), imageMetadata, (ID3D11Resource**)&SMTexture);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
 	D3D11_TEXTURE2D_DESC SMTextureDesc;
 	SMTexture->GetDesc(&SMTextureDesc);
