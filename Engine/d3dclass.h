@@ -2,12 +2,6 @@
 #ifndef _D3DCLASS_H_
 #define _D3DCLASS_H_
 
-// LINKING
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3d11.lib")
-
-#pragma comment(lib, "D3DCompiler.lib")
-
 // INCLUDES
 
 #include <dxgi.h>

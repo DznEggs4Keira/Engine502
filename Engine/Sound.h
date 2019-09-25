@@ -2,11 +2,6 @@
 #ifndef _SOUNDCLASS_H_
 #define _SOUNDCLASS_H_
 
-// LINKING 
-#pragma comment(lib, "dsound.lib")
-#pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "winmm.lib")
-
 // INCLUDES
 #include <windows.h>
 #include <mmsystem.h>
