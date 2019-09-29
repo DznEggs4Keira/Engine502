@@ -99,6 +99,12 @@
     <ClCompile Include="waterclass.cpp">
       <Filter>Models\Source</Filter>
     </ClCompile>
+    <ClCompile Include="MeshClass.cpp">
+      <Filter>Models\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpModelClass.cpp">
+      <Filter>Models\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cameraclass.h">
@@ -162,6 +168,12 @@
       <Filter>Models\Headers</Filter>
     </ClInclude>
     <ClInclude Include="waterclass.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshClass.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpModelClass.h">
       <Filter>Models\Headers</Filter>
     </ClInclude>
   </ItemGroup>

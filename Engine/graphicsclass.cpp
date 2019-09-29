@@ -12,6 +12,7 @@ GraphicsClass::GraphicsClass()
 	m_Movement = 0;
 	m_Timer = 0;
 
+	m_AssimpModel = 0;
 	m_Model = 0;
 	m_Tree = 0;
 	m_SkySphere = 0;
@@ -164,7 +165,22 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	result = m_Tree->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/cube.txt", L"../Engine/data/Textures/bark.dds");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the Tree test object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the Tree object.", L"Error", MB_OK);
+		return false;
+	}
+
+	//Load attempt the assim model
+	m_AssimpModel = new AssimpModelClass();
+	if (!m_AssimpModel)
+	{
+		return false;
+	}
+
+	//Initialize the model
+	result = m_AssimpModel->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/polyhedron.obj");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -577,6 +593,14 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
 
+	// Reset the world matrix.
+	worldMatrix = m_D3D->GetWorldMatrix();
+
+	for (int i = 0; i < m_AssimpModel->m_Meshes.size(); i++)
+	{
+		m_AssimpModel->m_Meshes[i].Render(m_D3D->GetDeviceContext());
+	}
+
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	m_D3D->SetBackBufferRenderTarget();
 
@@ -730,6 +754,15 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	if (!result)
 	{
 		return false;
+	}
+
+	// Reset the world matrix.
+	worldMatrix = m_D3D->GetWorldMatrix();
+
+	//Try rendering the assimp model
+	for (int i = 0; i < m_AssimpModel->m_Meshes.size(); i++)
+	{
+		m_AssimpModel->m_Meshes[i].Render(m_D3D->GetDeviceContext());
 	}
 
 	// Present the rendered scene to the screen.

@@ -18,6 +18,7 @@
 #include "terrainclass.h"
 #include "skySphere.h"
 #include "modelclass.h"
+#include "AssimpModelClass.h"
 
 //Shader
 #include "ShaderManagerClass.h"
@@ -59,6 +60,7 @@ private:
 	Movement* m_Movement;
 	FrameTime* m_Timer;
 
+	AssimpModelClass* m_AssimpModel;
 	ModelClass* m_Model;
 	ModelClass* m_Tree;
 	TerrainClass* m_Terrain;

@@ -90,6 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AssimpModelClass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
     <ClCompile Include="FrameTime.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="lightclass.cpp" />
     <ClCompile Include="lightshaderclass.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeshClass.cpp" />
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="reflectionshaderclass.cpp" />
@@ -114,6 +116,7 @@
     <ClCompile Include="watershaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssimpModelClass.h" />
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="d3dclass.h" />
     <ClInclude Include="FrameTime.h" />
@@ -121,6 +124,7 @@
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
     <ClInclude Include="lightshaderclass.h" />
+    <ClInclude Include="MeshClass.h" />
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="Movement.h" />
     <ClInclude Include="reflectionshaderclass.h" />
