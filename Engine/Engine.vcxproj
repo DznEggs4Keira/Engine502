@@ -43,13 +43,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)Engine\Includes;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Engine\Libs\Any;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)Engine\Libs\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\..\Exe</OutDir>
     <IncludePath>$(SolutionDir)Engine\Includes;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Engine\Libs\Any;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)Engine\Libs\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -64,7 +64,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;D3DCompiler.lib;dinput8.lib;dxguid.lib;dsound.lib;winmm.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;D3DCompiler.lib;dinput8.lib;dxguid.lib;dsound.lib;winmm.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -86,7 +86,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;D3DCompiler.lib;dinput8.lib;dxguid.lib;dsound.lib;winmm.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;D3DCompiler.lib;dinput8.lib;dxguid.lib;dsound.lib;winmm.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

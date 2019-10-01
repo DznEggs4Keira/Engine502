@@ -2,6 +2,9 @@
 
 MeshClass::MeshClass(ID3D11Device* device, std::vector<Vertex> vertices, std::vector<DWORD> indices)
 {
+	m_vertexBuffer = nullptr;
+	m_indexBuffer = nullptr;
+
 	Initialize(device, vertices, indices);
 }
 
@@ -12,6 +15,7 @@ MeshClass::MeshClass(const MeshClass& Mesh)
 
 MeshClass::~MeshClass()
 {
+	Shutdown();
 }
 
 #pragma region Init
@@ -19,38 +23,11 @@ MeshClass::~MeshClass()
 bool MeshClass::Initialize(ID3D11Device* device, std::vector<Vertex> vertices, std::vector<DWORD> indices)
 {
 	int vertexCount = vertices.size();
-	m_indexCount = indices.size();
+	int m_indexCount = indices.size();
 
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
-	int i;
-
-	/*
-	// Create the vertex array.
-	vertices = new VertexType[m_vertexCount];
-	if(!vertices)
-	{
-		return false;
-	}
-
-	// Create the index array.
-	indices = new unsigned long[m_indexCount];
-	if(!indices)
-	{
-		return false;
-	}
-
-	// Load the vertex array and index array with data.
-	for(i=0; i<m_vertexCount; i++)
-	{
-		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
-		vertices[i].texture = XMFLOAT2(m_model[i].tu, m_model[i].tv);
-		vertices[i].normal = XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
-
-		indices[i] = i;
-	}
-	*/
 
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -92,15 +69,6 @@ bool MeshClass::Initialize(ID3D11Device* device, std::vector<Vertex> vertices, s
 		return false;
 	}
 
-	/*
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
-	delete [] vertices;
-	vertices = 0;
-
-	delete [] indices;
-	indices = 0;
-	*/
-
 	return true;
 }
 
@@ -114,21 +82,20 @@ void MeshClass::Shutdown()
 	if (m_indexBuffer)
 	{
 		m_indexBuffer->Release();
-		m_indexBuffer = 0;
 	}
 
 	// Release the vertex buffer.
 	if (m_vertexBuffer)
 	{
 		m_vertexBuffer->Release();
-		m_vertexBuffer = 0;
 	}
-
-	return;
 }
 
 #pragma endregion
 
+#pragma region Getters/Setters
+
+#pragma endregion
 
 #pragma region Render
 

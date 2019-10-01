@@ -60,7 +60,7 @@ private:
 	Movement* m_Movement;
 	FrameTime* m_Timer;
 
-	AssimpModelClass* m_AssimpModel;
+	std::vector<AssimpModelClass*> m_AssimpModel;
 	ModelClass* m_Model;
 	ModelClass* m_Tree;
 	TerrainClass* m_Terrain;

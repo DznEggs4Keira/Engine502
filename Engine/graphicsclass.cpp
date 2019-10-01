@@ -12,7 +12,6 @@ GraphicsClass::GraphicsClass()
 	m_Movement = 0;
 	m_Timer = 0;
 
-	m_AssimpModel = 0;
 	m_Model = 0;
 	m_Tree = 0;
 	m_SkySphere = 0;
@@ -169,8 +168,9 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
+	/*
 	//Load attempt the assim model
-	m_AssimpModel = new AssimpModelClass();
+	AssimpModelClass *m_AssimpModel = new AssimpModelClass();
 	if (!m_AssimpModel)
 	{
 		return false;
@@ -183,6 +183,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
 		return false;
 	}
+	*/
 
 	// Create the light object.
 	m_Light = new LightClass;
@@ -353,6 +354,15 @@ void GraphicsClass::Shutdown()
 		delete m_Tree;
 		m_Tree = 0;
 	}
+
+	/*
+	// Release Assimp Model
+	if (m_AssimpModel)
+	{
+		delete m_AssimpModel;
+		m_AssimpModel = 0;
+	}
+	*/
 
 	// Release the camera object.
 	if (m_Camera)
@@ -593,13 +603,21 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
 
+	/*
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
 	for (int i = 0; i < m_AssimpModel->m_Meshes.size(); i++)
 	{
-		m_AssimpModel->m_Meshes[i].Render(m_D3D->GetDeviceContext());
+		m_AssimpModel->m_Meshes.at(i)->Render(m_D3D->GetDeviceContext());
 	}
+
+	// Try rendering the assimp model using the light shader.
+	m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_AssimpModel->indices.size(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
+
+	*/
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	m_D3D->SetBackBufferRenderTarget();
@@ -756,6 +774,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 		return false;
 	}
 
+	/*
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
@@ -764,6 +783,12 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	{
 		m_AssimpModel->m_Meshes[i].Render(m_D3D->GetDeviceContext());
 	}
+
+	// Try rendering the assimp model using the light shader.
+	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_AssimpModel->indices.size(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
+	*/
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();

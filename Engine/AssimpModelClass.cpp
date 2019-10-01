@@ -2,6 +2,7 @@
 
 AssimpModelClass::AssimpModelClass()
 {
+	m_device = 0;
 }
 
 AssimpModelClass::~AssimpModelClass()
@@ -52,11 +53,8 @@ void AssimpModelClass::ProcessNode(aiNode* node, const aiScene* scene)
 	}
 }
 
-MeshClass AssimpModelClass::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+MeshClass* AssimpModelClass::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
-	std::vector<Vertex> vertices;
-	std::vector<DWORD> indices;
-
 	// Get vertices
 	for (int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -97,7 +95,8 @@ MeshClass AssimpModelClass::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	*/
 
 	// Create mesh
-	return MeshClass(this->m_device, vertices, indices);
+	MeshClass *m_Meshes = new MeshClass(m_device, vertices, indices); //Calls initialise in mesh class
+	return m_Meshes;
 }
 
 

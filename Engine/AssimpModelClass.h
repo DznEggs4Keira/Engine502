@@ -15,13 +15,16 @@ public:
 	~AssimpModelClass();
 
 	bool Initialize(ID3D11Device*, const std::string &);
-	std::vector<MeshClass> m_Meshes;
+	std::vector<MeshClass*> m_Meshes;
+
+	std::vector<Vertex> vertices;
+	std::vector<DWORD> indices;
 
 private:
 	
 	bool LoadModel(const std::string &);
 	void ProcessNode(aiNode*, const aiScene*);
-	MeshClass ProcessMesh(aiMesh*, const aiScene*);
+	MeshClass* ProcessMesh(aiMesh*, const aiScene*);
 
 
 	ID3D11Device* m_device;
