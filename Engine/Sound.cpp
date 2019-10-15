@@ -16,6 +16,11 @@ Sound::Sound(const Sound&)
 
 Sound::~Sound()
 {
+	// Release the secondary buffer.
+	ShutdownWaveFile(&m_secondaryBuffer1);
+
+	// Shutdown the Direct Sound API.
+	ShutdownDirectSound();
 }
 
 //public functions
@@ -46,17 +51,6 @@ bool Sound::Initialize(HWND hwnd)
 	}
 	
 	return true;
-}
-
-void Sound::Shutdown()
-{
-	// Release the secondary buffer.
-	ShutdownWaveFile(&m_secondaryBuffer1);
-
-	// Shutdown the Direct Sound API.
-	ShutdownDirectSound();
-
-	return;
 }
 
 //private functions

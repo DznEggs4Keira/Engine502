@@ -19,6 +19,45 @@ ShaderManagerClass::ShaderManagerClass(const ShaderManagerClass& other)
 
 ShaderManagerClass::~ShaderManagerClass()
 {
+	//Release the Reflection Shader object.
+	if (m_ReflectionShader)
+	{
+		m_ReflectionShader->Shutdown();
+		delete m_ReflectionShader;
+		m_ReflectionShader = 0;
+	}
+
+	// Release the water shader object.
+	if (m_WaterShader)
+	{
+		m_WaterShader->Shutdown();
+		delete m_WaterShader;
+		m_WaterShader = 0;
+	}
+
+	// Release the terrain shader object.
+	if (m_TerrainShader)
+	{
+		m_TerrainShader->Shutdown();
+		delete m_TerrainShader;
+		m_TerrainShader = 0;
+	}
+
+	// Release the sky sphere shader object.
+	if (m_SkySphereShader)
+	{
+		m_SkySphereShader->Shutdown();
+		delete m_SkySphereShader;
+		m_SkySphereShader = 0;
+	}
+
+	// Release the light shader object.
+	if (m_LightShader)
+	{
+		m_LightShader->Shutdown();
+		delete m_LightShader;
+		m_LightShader = 0;
+	}
 }
 
 bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
@@ -101,52 +140,6 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	return true;
-}
-
-
-void ShaderManagerClass::Shutdown()
-{
-	//Release the Reflection Shader object.
-	if (m_ReflectionShader)
-	{
-		m_ReflectionShader->Shutdown();
-		delete m_ReflectionShader;
-		m_ReflectionShader = 0;
-	}
-
-	// Release the water shader object.
-	if (m_WaterShader)
-	{
-		m_WaterShader->Shutdown();
-		delete m_WaterShader;
-		m_WaterShader = 0;
-	}
-
-	// Release the terrain shader object.
-	if (m_TerrainShader)
-	{
-		m_TerrainShader->Shutdown();
-		delete m_TerrainShader;
-		m_TerrainShader = 0;
-	}
-
-	// Release the sky sphere shader object.
-	if (m_SkySphereShader)
-	{
-		m_SkySphereShader->Shutdown();
-		delete m_SkySphereShader;
-		m_SkySphereShader = 0;
-	}
-
-	// Release the light shader object.
-	if (m_LightShader)
-	{
-		m_LightShader->Shutdown();
-		delete m_LightShader;
-		m_LightShader = 0;
-	}
-
-	return;
 }
 
 bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,

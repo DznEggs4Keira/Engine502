@@ -46,9 +46,6 @@ public:
 	//initialise will create everything needed for sound
 	bool Initialize(HWND);
 
-	//shutdown will release everything
-	void Shutdown();
-
 private:
 
 	//private functions to load direct sound, the audio files and use them as needed accordingly

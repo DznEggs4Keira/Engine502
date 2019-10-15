@@ -19,6 +19,11 @@ WaterClass::WaterClass(const WaterClass& other)
 
 WaterClass::~WaterClass()
 {
+	// Release the model texture.
+	ReleaseTexture();
+
+	// Release the vertex and index buffers.
+	ShutdownBuffers();
 }
 
 
@@ -62,19 +67,6 @@ bool WaterClass::Initialize(ID3D11Device* device, WCHAR* textureFilename, float 
 
 	return true;
 }
-
-
-void WaterClass::Shutdown()
-{
-	// Release the model texture.
-	ReleaseTexture();
-
-	// Release the vertex and index buffers.
-	ShutdownBuffers();
-
-	return;
-}
-
 
 void WaterClass::Frame()
 {
@@ -325,7 +317,6 @@ void WaterClass::ReleaseTexture()
 	// Release the texture object.
 	if (m_Texture)
 	{
-		m_Texture->Shutdown();
 		delete m_Texture;
 		m_Texture = 0;
 	}

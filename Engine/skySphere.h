@@ -35,7 +35,6 @@ public:
 	~skySphere();
 
 	bool Initialize(ID3D11Device*, WCHAR*);
-	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	int GetIndexCount();

@@ -21,6 +21,35 @@ RenderTextureClass::RenderTextureClass(const RenderTextureClass& other)
 
 RenderTextureClass::~RenderTextureClass()
 {
+	if (m_depthStencilView)
+	{
+		m_depthStencilView->Release();
+		m_depthStencilView = 0;
+	}
+
+	if (m_depthStencilBuffer)
+	{
+		m_depthStencilBuffer->Release();
+		m_depthStencilBuffer = 0;
+	}
+
+	if (m_shaderResourceView)
+	{
+		m_shaderResourceView->Release();
+		m_shaderResourceView = 0;
+	}
+
+	if (m_renderTargetView)
+	{
+		m_renderTargetView->Release();
+		m_renderTargetView = 0;
+	}
+
+	if (m_renderTargetTexture)
+	{
+		m_renderTargetTexture->Release();
+		m_renderTargetTexture = 0;
+	}
 }
 
 
@@ -134,42 +163,6 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 	m_orthoMatrix = XMMatrixOrthographicLH((float)textureWidth, (float)textureHeight, screenNear, screenDepth);
 
 	return true;
-}
-
-
-void RenderTextureClass::Shutdown()
-{
-	if (m_depthStencilView)
-	{
-		m_depthStencilView->Release();
-		m_depthStencilView = 0;
-	}
-
-	if (m_depthStencilBuffer)
-	{
-		m_depthStencilBuffer->Release();
-		m_depthStencilBuffer = 0;
-	}
-
-	if (m_shaderResourceView)
-	{
-		m_shaderResourceView->Release();
-		m_shaderResourceView = 0;
-	}
-
-	if (m_renderTargetView)
-	{
-		m_renderTargetView->Release();
-		m_renderTargetView = 0;
-	}
-
-	if (m_renderTargetTexture)
-	{
-		m_renderTargetTexture->Release();
-		m_renderTargetTexture = 0;
-	}
-
-	return;
 }
 
 

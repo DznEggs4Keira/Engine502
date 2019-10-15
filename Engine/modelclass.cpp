@@ -15,6 +15,14 @@ ModelClass::ModelClass(const ModelClass& other)
 
 ModelClass::~ModelClass()
 {
+	// Shutdown the vertex and index buffers.
+	ShutdownBuffers();
+
+	// Release the model data.
+	ReleaseModel();
+
+	// Release the model texture.
+	ReleaseTexture();
 }
 
 bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* textureFilename)
@@ -44,21 +52,6 @@ bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* te
 	}
 
 	return true;
-}
-
-void ModelClass::Shutdown()
-{
-
-	// Shutdown the vertex and index buffers.
-	ShutdownBuffers();
-
-	// Release the model data.
-	ReleaseModel();
-
-	// Release the model texture.
-	ReleaseTexture();
-
-	return;
 }
 
 void ModelClass::Render(ID3D11DeviceContext* deviceContext)
@@ -300,7 +293,6 @@ void ModelClass::ReleaseTexture()
 	// Release the texture object.
 	if (m_Texture)
 	{
-		m_Texture->Shutdown();
 		delete m_Texture;
 		m_Texture = 0;
 	}

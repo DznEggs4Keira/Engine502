@@ -59,7 +59,6 @@ public:
 	~TerrainClass();
 
 	bool Initialize(ID3D11Device*, char*, WCHAR*, char*);
-	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	int GetIndexCount();

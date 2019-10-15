@@ -26,8 +26,7 @@ public:
 	
 	//Initialize
 	bool Initialize(ID3D11Device*, std::vector<Vertex>, std::vector<DWORD>);
-	//Shutdown
-	void Shutdown();
+
 	//Render
 	void Render(ID3D11DeviceContext*);
 

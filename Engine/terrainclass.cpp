@@ -20,6 +20,14 @@ TerrainClass::TerrainClass(const TerrainClass& other)
 
 TerrainClass::~TerrainClass()
 {
+	// Release the texture.
+	ReleaseTexture();
+
+	// Release the vertex and index buffer.
+	ShutdownBuffers();
+
+	// Release the height map data.
+	ShutdownHeightMap();
 }
 
 
@@ -71,22 +79,6 @@ bool TerrainClass::Initialize(ID3D11Device* device, char* heightMapFilename, WCH
 
 	return true;
 }
-
-
-void TerrainClass::Shutdown()
-{
-	// Release the texture.
-	ReleaseTexture();
-
-	// Release the vertex and index buffer.
-	ShutdownBuffers();
-
-	// Release the height map data.
-	ShutdownHeightMap();
-
-	return;
-}
-
 
 void TerrainClass::Render(ID3D11DeviceContext* deviceContext)
 {
@@ -459,7 +451,6 @@ void TerrainClass::ReleaseTexture()
 	// Release the texture object.
 	if (m_Texture)
 	{
-		m_Texture->Shutdown();
 		delete m_Texture;
 		m_Texture = 0;
 	}

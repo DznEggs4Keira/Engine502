@@ -40,7 +40,6 @@ public:
 	~GraphicsClass();
 
 	bool Initialize(HINSTANCE, HWND, int, int);
-	void Shutdown();
 	bool Frame();
 
 private:

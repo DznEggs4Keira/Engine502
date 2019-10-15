@@ -14,6 +14,14 @@ skySphere::skySphere(const skySphere&)
 
 skySphere::~skySphere()
 {
+	// Release the texture.
+	ReleaseTexture();
+
+	// Release the vertex and index buffer that were used for rendering the sky dome.
+	ReleaseBuffers();
+
+	// Release the sky dome model.
+	ReleaseSkySphere();
 }
 
 bool skySphere::Initialize(ID3D11Device* device, WCHAR* textureFilename)
@@ -49,20 +57,6 @@ bool skySphere::Initialize(ID3D11Device* device, WCHAR* textureFilename)
 	m_centerColor = XMFLOAT4(1.0f, 0.74f, 0.30f, 0.5f);
 
 	return true;
-}
-
-void skySphere::Shutdown()
-{
-	// Release the texture.
-	ReleaseTexture();
-
-	// Release the vertex and index buffer that were used for rendering the sky dome.
-	ReleaseBuffers();
-
-	// Release the sky dome model.
-	ReleaseSkySphere();
-
-	return;
 }
 
 void skySphere::Render(ID3D11DeviceContext* deviceContext)
@@ -312,7 +306,6 @@ void skySphere::ReleaseTexture()
 	// Release the texture object.
 	if (m_Texture)
 	{
-		m_Texture->Shutdown();
 		delete m_Texture;
 		m_Texture = 0;
 	}

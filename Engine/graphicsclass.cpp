@@ -31,6 +31,104 @@ GraphicsClass::GraphicsClass(const GraphicsClass& other)
 
 GraphicsClass::~GraphicsClass()
 {
+	// Release the water shader object.
+	if (m_ShaderManager)
+	{
+		delete m_ShaderManager;
+		m_ShaderManager = 0;
+	}
+
+	// Release the water object.
+	if (m_Water)
+	{
+		delete m_Water;
+		m_Water = 0;
+	}
+
+	// Release the reflection render to texture object.
+	if (m_ReflectionTexture)
+	{
+		delete m_ReflectionTexture;
+		m_ReflectionTexture = 0;
+	}
+
+	// Release the refraction render to texture object.
+	if (m_RefractionTexture)
+	{
+		delete m_RefractionTexture;
+		m_RefractionTexture = 0;
+	}
+
+	//Release the terrain object.
+	if (m_Terrain)
+	{
+		delete m_Terrain;
+		m_Terrain = 0;
+	}
+
+	// Release the position object.
+	if (m_Movement)
+	{
+		delete m_Movement;
+		m_Movement = 0;
+	}
+
+	// Release the timer object.
+	if (m_Timer)
+	{
+		delete m_Timer;
+		m_Timer = 0;
+	}
+
+	// Release the sky dome object.
+	if (m_SkySphere)
+	{
+		delete m_SkySphere;
+		m_SkySphere = 0;
+	}
+
+	// Release the light object.
+	if (m_Light)
+	{
+		delete m_Light;
+		m_Light = 0;
+	}
+
+	// Release the model object.
+	if (m_Model)
+	{
+		delete m_Model;
+		m_Model = 0;
+	}
+
+	// Release the tree object.
+	if (m_Tree)
+	{
+		delete m_Tree;
+		m_Tree = 0;
+	}
+
+	// Release Assimp Model
+	for each (AssimpModelClass* p in m_AssimpModel)
+	{
+		delete p;
+		p = 0;
+	}
+
+	// Release the camera object.
+	if (m_Camera)
+	{
+		delete m_Camera;
+		m_Camera = 0;
+	}
+
+	// Release the D3D object.
+	if (m_D3D)
+	{
+		delete m_D3D;
+		m_D3D = 0;
+	}
+
 }
 
 
@@ -168,22 +266,22 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	/*
 	//Load attempt the assim model
-	AssimpModelClass *m_AssimpModel = new AssimpModelClass();
-	if (!m_AssimpModel)
+	AssimpModelClass *m_pAssimpModel = new AssimpModelClass();
+	if (!m_pAssimpModel)
 	{
 		return false;
 	}
 
 	//Initialize the model
-	result = m_AssimpModel->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/polyhedron.obj");
+	result = m_pAssimpModel->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/polyhedron.obj");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
 		return false;
 	}
-	*/
+
+	m_AssimpModel.push_back(m_pAssimpModel);
 
 	// Create the light object.
 	m_Light = new LightClass;
@@ -266,122 +364,6 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 
 	return true;
 }
-
-
-void GraphicsClass::Shutdown()
-{
-	// Release the water shader object.
-	if (m_ShaderManager)
-	{
-		m_ShaderManager->Shutdown();
-		delete m_ShaderManager;
-		m_ShaderManager = 0;
-	}
-
-	// Release the water object.
-	if (m_Water)
-	{
-		m_Water->Shutdown();
-		delete m_Water;
-		m_Water = 0;
-	}
-
-	// Release the reflection render to texture object.
-	if (m_ReflectionTexture)
-	{
-		m_ReflectionTexture->Shutdown();
-		delete m_ReflectionTexture;
-		m_ReflectionTexture = 0;
-	}
-
-	// Release the refraction render to texture object.
-	if (m_RefractionTexture)
-	{
-		m_RefractionTexture->Shutdown();
-		delete m_RefractionTexture;
-		m_RefractionTexture = 0;
-	}
-
-	//Release the terrain object.
-	if (m_Terrain)
-	{
-		m_Terrain->Shutdown();
-		delete m_Terrain;
-		m_Terrain = 0;
-	}
-
-	// Release the position object.
-	if (m_Movement)
-	{
-		delete m_Movement;
-		m_Movement = 0;
-	}
-
-	// Release the timer object.
-	if (m_Timer)
-	{
-		delete m_Timer;
-		m_Timer = 0;
-	}
-
-	// Release the sky dome object.
-	if (m_SkySphere)
-	{
-		m_SkySphere->Shutdown();
-		delete m_SkySphere;
-		m_SkySphere = 0;
-	}
-
-	// Release the light object.
-	if (m_Light)
-	{
-		delete m_Light;
-		m_Light = 0;
-	}
-
-	// Release the model object.
-	if (m_Model)
-	{
-		m_Model->Shutdown();
-		delete m_Model;
-		m_Model = 0;
-	}
-
-	// Release the tree object.
-	if (m_Tree)
-	{
-		m_Tree->Shutdown();
-		delete m_Tree;
-		m_Tree = 0;
-	}
-
-	/*
-	// Release Assimp Model
-	if (m_AssimpModel)
-	{
-		delete m_AssimpModel;
-		m_AssimpModel = 0;
-	}
-	*/
-
-	// Release the camera object.
-	if (m_Camera)
-	{
-		delete m_Camera;
-		m_Camera = 0;
-	}
-
-	// Release the D3D object.
-	if (m_D3D)
-	{
-		m_D3D->Shutdown();
-		delete m_D3D;
-		m_D3D = 0;
-	}
-
-	return;
-}
-
 
 bool GraphicsClass::Frame()
 {
@@ -603,21 +585,21 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
 
-	/*
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
-	for (int i = 0; i < m_AssimpModel->m_Meshes.size(); i++)
+	for each (AssimpModelClass* p in m_AssimpModel)
 	{
-		m_AssimpModel->m_Meshes.at(i)->Render(m_D3D->GetDeviceContext());
+		for (int i = 0; i < p->m_Meshes.size(); i++)
+		{
+			p->m_Meshes.at(i)->Render(m_D3D->GetDeviceContext());
+		}
+
+		// Try rendering the assimp model using the light shader.
+		m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+			m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
 	}
-
-	// Try rendering the assimp model using the light shader.
-	m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_AssimpModel->indices.size(), worldMatrix, reflectionViewMatrix, projectionMatrix,
-		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
-
-	*/
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	m_D3D->SetBackBufferRenderTarget();
@@ -774,21 +756,22 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 		return false;
 	}
 
-	/*
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
-	//Try rendering the assimp model
-	for (int i = 0; i < m_AssimpModel->m_Meshes.size(); i++)
+	for each (AssimpModelClass* p in m_AssimpModel)
 	{
-		m_AssimpModel->m_Meshes[i].Render(m_D3D->GetDeviceContext());
-	}
+		//Try rendering the assimp model
+		for (int i = 0; i < p->m_Meshes.size(); i++)
+		{
+			p->m_Meshes[i]->Render(m_D3D->GetDeviceContext());
+		}
 
-	// Try rendering the assimp model using the light shader.
-	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_AssimpModel->indices.size(), worldMatrix, viewMatrix, projectionMatrix,
-		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
-	*/
+		// Try rendering the assimp model using the light shader.
+		result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
+	}
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();

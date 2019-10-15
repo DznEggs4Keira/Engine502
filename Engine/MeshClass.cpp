@@ -15,7 +15,17 @@ MeshClass::MeshClass(const MeshClass& Mesh)
 
 MeshClass::~MeshClass()
 {
-	Shutdown();
+	// Release the index buffer.
+	if (m_indexBuffer)
+	{
+		m_indexBuffer->Release();
+	}
+
+	// Release the vertex buffer.
+	if (m_vertexBuffer)
+	{
+		m_vertexBuffer->Release();
+	}
 }
 
 #pragma region Init
@@ -71,29 +81,6 @@ bool MeshClass::Initialize(ID3D11Device* device, std::vector<Vertex> vertices, s
 
 	return true;
 }
-
-#pragma endregion
-
-#pragma region Shutdown
-
-void MeshClass::Shutdown()
-{
-	// Release the index buffer.
-	if (m_indexBuffer)
-	{
-		m_indexBuffer->Release();
-	}
-
-	// Release the vertex buffer.
-	if (m_vertexBuffer)
-	{
-		m_vertexBuffer->Release();
-	}
-}
-
-#pragma endregion
-
-#pragma region Getters/Setters
 
 #pragma endregion
 

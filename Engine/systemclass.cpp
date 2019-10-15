@@ -18,6 +18,22 @@ SystemClass::SystemClass(const SystemClass& other)
 
 SystemClass::~SystemClass()
 {
+	// Release the sound object.
+	if (m_Sound)
+	{
+		delete m_Sound;
+		m_Sound = 0;
+	}
+
+	// Release the graphics object.
+	if (m_Graphics)
+	{
+		delete m_Graphics;
+		m_Graphics = 0;
+	}
+
+	// Shutdown the window.
+	ShutdownWindows();
 }
 
 
@@ -65,30 +81,6 @@ bool SystemClass::Initialize()
 	}
 
 	return true;
-}
-
-void SystemClass::Shutdown()
-{
-	// Release the sound object.
-	if (m_Sound)
-	{
-		m_Sound->Shutdown();
-		delete m_Sound;
-		m_Sound = 0;
-	}
-
-	// Release the graphics object.
-	if(m_Graphics)
-	{
-		m_Graphics->Shutdown();
-		delete m_Graphics;
-		m_Graphics = 0;
-	}
-
-	// Shutdown the window.
-	ShutdownWindows();
-	
-	return;
 }
 
 

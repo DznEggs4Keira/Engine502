@@ -38,7 +38,6 @@ public:
 	~WaterClass();
 
 	bool Initialize(ID3D11Device*, WCHAR*, float, float);
-	void Shutdown();
 	void Frame();
 	void Render(ID3D11DeviceContext*);
 

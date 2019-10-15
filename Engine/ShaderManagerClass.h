@@ -25,7 +25,6 @@ public:
 	~ShaderManagerClass();
 
 	bool Initialize(ID3D11Device*, HWND);
-	void Shutdown();
 
 	//seperate render functions for each shader
 	bool RenderLightShader(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, XMFLOAT3, XMFLOAT4, XMFLOAT4,

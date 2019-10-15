@@ -15,6 +15,12 @@ TextureClass::TextureClass(const TextureClass& other)
 
 TextureClass::~TextureClass()
 {
+	// Release the texture resource.
+	if (m_texture)
+	{
+		m_texture->Release();
+		m_texture = 0;
+	}
 }
 
 
@@ -41,19 +47,6 @@ bool TextureClass::Initialize(ID3D11Device* device, WCHAR* filename)
 	}
 
 	return true;
-}
-
-
-void TextureClass::Shutdown()
-{
-	// Release the texture resource.
-	if(m_texture)
-	{
-		m_texture->Release();
-		m_texture = 0;
-	}
-
-	return;
 }
 
 
