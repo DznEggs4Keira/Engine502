@@ -274,7 +274,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	//Initialize the model
-	result = m_pAssimpModel->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/polyhedron.obj");
+	result = m_pAssimpModel->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/palm1.obj");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
@@ -361,7 +361,6 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		MessageBox(hwnd, L"Could not initialize the water object.", L"Error", MB_OK);
 		return false;
 	}
-
 	return true;
 }
 
@@ -750,7 +749,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
 		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
 
-	//check ifthe tree cube rendered properly
+	//check if the tree cube rendered properly
 	if (!result)
 	{
 		return false;
@@ -766,6 +765,10 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 		{
 			p->m_Meshes[i]->Render(m_D3D->GetDeviceContext());
 		}
+
+		modelTranslateMatrix = XMMatrixTranslation(100.0f, 5.0f, 100.0f);
+		modelScaleMatrix = XMMatrixScaling(0.4f, 0.4f, 0.4f);
+		worldMatrix = XMMatrixMultiply(modelScaleMatrix, modelTranslateMatrix);
 
 		// Try rendering the assimp model using the light shader.
 		result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, viewMatrix, projectionMatrix,
