@@ -36,6 +36,7 @@ public:
 	bool IsRightPressed();
 
 	void GetMouseLocation(int&, int&);
+	XMFLOAT3 GetMouseMovement();
 
 private:
 	bool ReadKeyboard();

@@ -1,8 +1,10 @@
 #ifndef _POSITIONCLASS_H_
 #define _POSITIONCLASS_H_
 
-
+#include <DirectXMath.h>
 #include <math.h>
+
+using namespace DirectX;
 
 class Movement
 {
@@ -27,6 +29,7 @@ public:
 	void TurnRight(bool);
 	void LookUpward(bool);
 	void LookDownward(bool);
+	void RotateCamera(XMFLOAT3);
 
 private:
 	float m_positionX, m_positionY, m_positionZ;

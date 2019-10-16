@@ -438,7 +438,10 @@ bool GraphicsClass::HandleInput(float frameTime)
 	// Set the frame time for calculating the updated position.
 	m_Movement->SetFrameTime(frameTime);
 
-	// Handle the input.
+	///////////////////////////////////////////////////////////////////
+	
+	/*
+	// Handle the input. via keyboard
 	keyDown = m_Input->IsKeyPressedA();
 	m_Movement->TurnLeft(keyDown);
 
@@ -462,7 +465,38 @@ bool GraphicsClass::HandleInput(float frameTime)
 
 	keyDown = m_Input->IsRightPressed();
 	m_Movement->MoveDownward(keyDown);
+	*/
 
+	///////////////////////////////////////////////////////////////////
+
+	//Movement via keyboard being used
+	keyDown = m_Input->IsKeyPressedW();
+	m_Movement->MoveForward(keyDown);
+
+	keyDown = m_Input->IsKeyPressedS();
+	m_Movement->MoveBackward(keyDown);
+
+	keyDown = m_Input->IsKeyPressedA();
+	m_Movement->MoveUpward(keyDown);
+
+	keyDown = m_Input->IsKeyPressedD();
+	m_Movement->MoveDownward(keyDown);
+
+	///////////////////////////////////////////////////////////////////
+
+	// Camera Rotation via Mouse
+	XMFLOAT3 Rot, tempRot;
+
+	Rot = m_Input->GetMouseMovement();
+	tempRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	tempRot.x += Rot.x * 1 / 10;
+	tempRot.y += Rot.y * 1 / 10;
+	m_Movement->RotateCamera(tempRot);
+	
+	///////////////////////////////////////////////////////////////////
+
+	// Getter Setter
 	// Get the view point position/rotation.
 	m_Movement->GetPosition(posX, posY, posZ);
 	m_Movement->GetRotation(rotX, rotY, rotZ);

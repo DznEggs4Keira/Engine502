@@ -284,6 +284,26 @@ void Movement::LookDownward(bool keydown)
 	return;
 }
 
+void Movement::RotateCamera(XMFLOAT3 rotation)
+{
+	m_rotationX += rotation.y;
+	m_rotationY += rotation.x;
+	m_rotationZ += rotation.z;
+
+	//check if the rotation is greater than 0 then add 360 and if the angle exceeds 360 then reduce. FOR THE X AXIS
+	if (m_rotationX < 0.f)
+		m_rotationX = +360.0f;
+	else if (m_rotationX > 360.0f)
+		m_rotationX -= 360.0f;
+
+	//check if the rotation is greater than 0 then add 360 and if the angle exceeds 360 then reduce. FOR THE Y AXIS
+	if (m_rotationY < 0.0f)
+		m_rotationY += 360.0f;
+	else if (m_rotationY > 360.0f)
+		m_rotationY -= 360.0f;
+
+}
+
 void Movement::MoveUpward(bool keydown)
 {
 	// Update the upward speed movement based on the frame time and whether the user is holding the key down or not.

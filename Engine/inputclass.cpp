@@ -128,6 +128,11 @@ void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
 	return;
 }
 
+XMFLOAT3 InputClass::GetMouseMovement()
+{
+	return XMFLOAT3(m_mouseState.lX, m_mouseState.lY, m_mouseState.lZ);
+}
+
 bool InputClass::Frame()
 {
 	bool result;
