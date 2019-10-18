@@ -5,8 +5,6 @@
 // INCLUDES
 #include <windows.h>
 #include <mmsystem.h>
-#include <dsound.h>
-#include <stdio.h>
 
 #include <d3d11.h>
 #include <xaudio2.h>
