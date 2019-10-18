@@ -1,9 +1,29 @@
 #include "Sound.h"
 
+#ifdef _XBOX //Big-Endian
+#define fourccRIFF 'RIFF'
+#define fourccDATA 'data'
+#define fourccFMT 'fmt '
+#define fourccWAVE 'WAVE'
+#define fourccXWMA 'XWMA'
+#define fourccDPDS 'dpds'
+#endif
 
+#ifndef _XBOX //Little-Endian
+#define fourccRIFF 'FFIR'
+#define fourccDATA 'atad'
+#define fourccFMT ' tmf'
+#define fourccWAVE 'EVAW'
+#define fourccXWMA 'AMWX'
+#define fourccDPDS 'sdpd'
+#endif
 
 Sound::Sound()
 {
+	pXAudio2 = nullptr;
+	pMasterVoice = nullptr;
+	pSourceVoice = nullptr;
+
 	//initialising buffers
 	m_DirectSound = 0;
 	m_primaryBuffer = 0;
@@ -23,11 +43,31 @@ Sound::~Sound()
 	ShutdownDirectSound();
 }
 
-//public functions
+
+#pragma region Init
+
+//public function
 bool Sound::Initialize(HWND hwnd)
 {
+	HRESULT hr;
+	if (FAILED(hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR)))
+		return hr;
+
+	if (FAILED(hr = pXAudio2->CreateMasteringVoice(&pMasterVoice)))
+		return hr;
+
 	bool result;
 
+	result = InitializeXAudio2(hwnd);
+	if (!result)
+	{
+		return false;
+	}
+
+	if(FAILED(hr = PlaySoundFile()))
+		return hr;
+
+	/*
 	// Initialize direct sound and the primary sound buffer.
 	result = InitializeDirectSound(hwnd);
 	if (!result)
@@ -49,11 +89,180 @@ bool Sound::Initialize(HWND hwnd)
 	{
 		return false;
 	}
-	
+	*/
+
 	return true;
 }
 
 //private functions
+bool Sound::InitializeXAudio2(HWND hwnd)
+{
+	// Open the audio file with CreateFile.
+	LPCWSTR strFileName = L"../Engine/data/Sounds/Relaxing_Music.wav";
+
+	// Open the file
+	HANDLE hFile = CreateFile(
+								strFileName,
+								GENERIC_READ,
+								FILE_SHARE_READ,
+								NULL,
+								OPEN_EXISTING,
+								0,
+								NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return HRESULT_FROM_WIN32(GetLastError());
+
+	if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
+		return HRESULT_FROM_WIN32(GetLastError());
+
+	// Locate the 'RIFF' chunk in the audio file, and check the file type.
+	DWORD dwChunkSize;
+	DWORD dwChunkPosition;
+
+	//check the file type, should be fourccWAVE or 'XWMA'
+	FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition);
+
+	DWORD filetype;
+	ReadChunkData(hFile, &filetype, sizeof(DWORD), dwChunkPosition);
+	if (filetype != fourccWAVE)
+		return S_FALSE;
+
+	// Locate the 'fmt ' chunk, and copy its contents into a WAVEFORMATEXTENSIBLE structure.
+	FindChunk(hFile, fourccFMT, dwChunkSize, dwChunkPosition);
+	ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition);
+
+	// Locate the 'data' chunk, and read its contents into a buffer.
+	//fill out the audio data buffer with the contents of the fourccDATA chunk
+	FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
+	BYTE * pDataBuffer = new BYTE[dwChunkSize];
+	ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
+
+	// Populate an XAUDIO2_BUFFER structure.
+	buffer.AudioBytes = dwChunkSize;  //buffer containing audio data
+	buffer.pAudioData = pDataBuffer;  //size of the audio buffer in bytes
+	buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
+	buffer.LoopCount = XAUDIO2_LOOP_INFINITE; // tell the source voice to loop the audio
+}
+
+HRESULT Sound::FindChunk(HANDLE hFile, DWORD fourcc, DWORD & dwChunkSize, DWORD & dwChunkDataPosition)
+{
+	HRESULT hr = S_OK;
+	if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
+		return HRESULT_FROM_WIN32(GetLastError());
+
+	DWORD dwChunkType;
+	DWORD dwChunkDataSize;
+	DWORD dwRIFFDataSize = 0;
+	DWORD dwFileType;
+	DWORD bytesRead = 0;
+	DWORD dwOffset = 0;
+
+	while (hr == S_OK)
+	{
+		DWORD dwRead;
+		if (0 == ReadFile(hFile, &dwChunkType, sizeof(DWORD), &dwRead, NULL))
+			hr = HRESULT_FROM_WIN32(GetLastError());
+
+		if (0 == ReadFile(hFile, &dwChunkDataSize, sizeof(DWORD), &dwRead, NULL))
+			hr = HRESULT_FROM_WIN32(GetLastError());
+
+		switch (dwChunkType)
+		{
+		case fourccRIFF:
+			dwRIFFDataSize = dwChunkDataSize;
+			dwChunkDataSize = 4;
+			if (0 == ReadFile(hFile, &dwFileType, sizeof(DWORD), &dwRead, NULL))
+				hr = HRESULT_FROM_WIN32(GetLastError());
+			break;
+
+		default:
+			if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, dwChunkDataSize, NULL, FILE_CURRENT))
+				return HRESULT_FROM_WIN32(GetLastError());
+		}
+
+		dwOffset += sizeof(DWORD) * 2;
+
+		if (dwChunkType == fourcc)
+		{
+			dwChunkSize = dwChunkDataSize;
+			dwChunkDataPosition = dwOffset;
+			return S_OK;
+		}
+
+		dwOffset += dwChunkDataSize;
+
+		if (bytesRead >= dwRIFFDataSize) return S_FALSE;
+
+	}
+
+	return S_OK;
+
+}
+
+HRESULT Sound::ReadChunkData(HANDLE hFile, void * buffer, DWORD buffersize, DWORD bufferoffset)
+{
+	HRESULT hr = S_OK;
+	if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferoffset, NULL, FILE_BEGIN))
+		return HRESULT_FROM_WIN32(GetLastError());
+	DWORD dwRead;
+	if (0 == ReadFile(hFile, buffer, buffersize, &dwRead, NULL))
+		hr = HRESULT_FROM_WIN32(GetLastError());
+	return hr;
+}
+
+#pragma endregion
+
+#pragma region Play
+
+bool Sound::PlaySoundFile()
+{
+	bool result;
+	HRESULT hr;
+
+	if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, (WAVEFORMATEX*)&wfx))) 
+		return hr;
+
+	if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
+		return hr;
+
+	if (FAILED(hr = pSourceVoice->Start(0)))
+		return hr;
+}
+
+#pragma endregion
+
+
+#pragma region Shutdown
+
+void Sound::ShutdownDirectSound()
+{
+	pXAudio2 = nullptr;
+	pMasterVoice = nullptr;
+	pSourceVoice = nullptr;
+	buffer = { 0 };
+
+	/*
+	// Release the primary sound buffer pointer.
+	if (m_primaryBuffer)
+	{
+		m_primaryBuffer->Release();
+		m_primaryBuffer = 0;
+	}
+
+	// Release the direct sound interface pointer.
+	if (m_DirectSound)
+	{
+		m_DirectSound->Release();
+		m_DirectSound = 0;
+	}
+	*/
+}
+
+#pragma endregion
+
+#pragma region DirectSound
+
 bool Sound::InitializeDirectSound(HWND hwnd)
 {
 	HRESULT result;
@@ -108,27 +317,6 @@ bool Sound::InitializeDirectSound(HWND hwnd)
 	}
 
 	return true;
-}
-
-void Sound::ShutdownDirectSound()
-{
-	// Release the primary sound buffer pointer.
-	if (m_primaryBuffer)
-	{
-		m_primaryBuffer->Release();
-		m_primaryBuffer = 0;
-	}
-
-	// Release the direct sound interface pointer.
-	if (m_DirectSound)
-	{
-		m_DirectSound->Release();
-		m_DirectSound = 0;
-	}
-
-
-	//ask jovan why are there returns in void
-	return;
 }
 
 bool Sound::LoadWaveFile(char* filename, IDirectSoundBuffer8** secondaryBuffer)
@@ -237,7 +425,7 @@ bool Sound::LoadWaveFile(char* filename, IDirectSoundBuffer8** secondaryBuffer)
 
 	/*it is a bit more complex how they do it.... you have to create a temp buffer and save it all to that
 	 and then we call the secondary buffer and then fill it up... and then clear the temp buffer*/
-	// Create a temporary sound buffer with the specific buffer settings.
+	 // Create a temporary sound buffer with the specific buffer settings.
 	result = m_DirectSound->CreateSoundBuffer(&bufferDesc, &tempBuffer, NULL);
 	if (FAILED(result))
 	{
@@ -344,3 +532,7 @@ bool Sound::PlayWaveFile()
 
 	return true;
 }
+
+#pragma endregion
+
+

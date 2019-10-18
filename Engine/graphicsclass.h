@@ -51,6 +51,7 @@ private:
 	bool Render(float, float);
 
 private:
+
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	LightClass* m_Light;

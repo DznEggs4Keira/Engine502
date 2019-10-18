@@ -8,6 +8,9 @@
 #include <dsound.h>
 #include <stdio.h>
 
+#include <d3d11.h>
+#include <xaudio2.h>
+
 //sound is called in the system class
 
 class Sound
@@ -15,7 +18,6 @@ class Sound
 private:
 
 	//.WAV audio struct header
-	//try implementing MP3 later --- if time
 
 	struct WaveHeaderType
 	{
@@ -49,6 +51,13 @@ public:
 private:
 
 	//private functions to load direct sound, the audio files and use them as needed accordingly
+	HRESULT FindChunk(HANDLE, DWORD, DWORD & , DWORD & );
+	HRESULT ReadChunkData(HANDLE, void *, DWORD , DWORD );
+
+	bool InitializeXAudio2(HWND);
+	
+	bool PlaySoundFile();
+
 	bool InitializeDirectSound(HWND);
 	void ShutdownDirectSound();
 
@@ -58,6 +67,14 @@ private:
 	bool PlayWaveFile();
 
 private:
+
+	IXAudio2* pXAudio2;
+	IXAudio2MasteringVoice* pMasterVoice;
+
+	WAVEFORMATEXTENSIBLE wfx = { 0 };
+	XAUDIO2_BUFFER buffer = { 0 };
+
+	IXAudio2SourceVoice* pSourceVoice;
 
 	//we need two buffers for sound
 	//a primary one and a secondary one
