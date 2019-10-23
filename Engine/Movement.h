@@ -13,11 +13,9 @@ public:
 	Movement(const Movement&);
 	~Movement();
 
-	void SetPosition(float, float, float);
-	void SetRotation(float, float, float);
-
-	void GetPosition(float&, float&, float&);
-	void GetRotation(float&, float&, float&);
+	void SetPosition() { m_position = XMFLOAT3(50.0f, 1.0f, 25.0f); }
+	XMFLOAT3 GetRotation() { return m_rotation; }
+	XMFLOAT3 GetPosition() { return m_position; }
 
 	void SetFrameTime(float);
 
@@ -25,21 +23,14 @@ public:
 	void MoveBackward(bool);
 	void MoveUpward(bool);
 	void MoveDownward(bool);
-	void TurnLeft(bool);
-	void TurnRight(bool);
-	void LookUpward(bool);
-	void LookDownward(bool);
 	void RotateCamera(XMFLOAT3);
 
 private:
-	float m_positionX, m_positionY, m_positionZ;
-	float m_rotationX, m_rotationY, m_rotationZ;
+	XMFLOAT3 m_position, m_rotation;
 
 	float m_frameTime;
 
 	float m_forwardSpeed, m_backwardSpeed;
 	float m_upwardSpeed, m_downwardSpeed;
-	float m_leftTurnSpeed, m_rightTurnSpeed;
-	float m_lookUpSpeed, m_lookDownSpeed;
 };
 #endif

@@ -176,6 +176,9 @@
     <ClInclude Include="AssimpModelClass.h">
       <Filter>Models\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lightVS.hlsl">

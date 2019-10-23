@@ -11,6 +11,8 @@
 // MY CLASS INCLUDES
 #include "graphicsclass.h"
 #include "Sound.h"
+#include "inputclass.h"
+#include "Utils.h"
 
 class SystemClass
 {
@@ -33,10 +35,10 @@ private:
 	LPCWSTR m_applicationName;
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
-	GraphicsClass* m_Graphics;
 
-	//private pointer to the object of sound
+	GraphicsClass* m_Graphics;
 	Sound* m_Sound;
+	InputClass* m_Input;
 };
 
 

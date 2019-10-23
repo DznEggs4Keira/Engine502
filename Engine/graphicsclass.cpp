@@ -4,23 +4,18 @@
 
 GraphicsClass::GraphicsClass()
 {
-	m_D3D = 0;
-	m_Camera = 0;
-	m_Light = 0;
-	m_Input = 0;
+	m_D3D = nullptr;
+	m_Camera = nullptr;
+	m_Light = nullptr;
 
-	m_Movement = 0;
-	m_Timer = 0;
+	m_Model = nullptr;
+	m_SkySphere = nullptr;
+	m_Terrain = nullptr;
+	m_Water = nullptr;
 
-	m_Model = 0;
-	m_Tree = 0;
-	m_SkySphere = 0;
-	m_Terrain = 0;
-	m_Water = 0;
-
-	m_ShaderManager = 0;
-	m_RefractionTexture = 0;
-	m_ReflectionTexture = 0;
+	m_ShaderManager = nullptr;
+	m_RefractionTexture = nullptr;
+	m_ReflectionTexture = nullptr;
 }
 
 
@@ -32,81 +27,28 @@ GraphicsClass::GraphicsClass(const GraphicsClass& other)
 GraphicsClass::~GraphicsClass()
 {
 	// Release the water shader object.
-	if (m_ShaderManager)
-	{
-		delete m_ShaderManager;
-		m_ShaderManager = 0;
-	}
+	SAFE_DELETE(m_ShaderManager)
 
 	// Release the water object.
-	if (m_Water)
-	{
-		delete m_Water;
-		m_Water = 0;
-	}
+	SAFE_DELETE(m_Water)
 
 	// Release the reflection render to texture object.
-	if (m_ReflectionTexture)
-	{
-		delete m_ReflectionTexture;
-		m_ReflectionTexture = 0;
-	}
+	SAFE_DELETE(m_ReflectionTexture)
 
 	// Release the refraction render to texture object.
-	if (m_RefractionTexture)
-	{
-		delete m_RefractionTexture;
-		m_RefractionTexture = 0;
-	}
+	SAFE_DELETE(m_RefractionTexture)
 
 	//Release the terrain object.
-	if (m_Terrain)
-	{
-		delete m_Terrain;
-		m_Terrain = 0;
-	}
-
-	// Release the position object.
-	if (m_Movement)
-	{
-		delete m_Movement;
-		m_Movement = 0;
-	}
-
-	// Release the timer object.
-	if (m_Timer)
-	{
-		delete m_Timer;
-		m_Timer = 0;
-	}
+	SAFE_DELETE(m_Terrain)
 
 	// Release the sky dome object.
-	if (m_SkySphere)
-	{
-		delete m_SkySphere;
-		m_SkySphere = 0;
-	}
+	SAFE_DELETE(m_SkySphere)
 
 	// Release the light object.
-	if (m_Light)
-	{
-		delete m_Light;
-		m_Light = 0;
-	}
+	SAFE_DELETE(m_Light)
 
 	// Release the model object.
-	if (m_Model)
-	{
-		delete m_Model;
-		m_Model = 0;
-	}
-
-	// Release the tree object.
-	if (m_Tree)
-	{
-		delete m_Tree;
-		m_Tree = 0;
-	}
+	SAFE_DELETE(m_Model)
 
 	// Release Assimp Model
 	for each (AssimpModelClass* p in m_AssimpModel)
@@ -116,41 +58,20 @@ GraphicsClass::~GraphicsClass()
 	}
 
 	// Release the camera object.
-	if (m_Camera)
-	{
-		delete m_Camera;
-		m_Camera = 0;
-	}
+	SAFE_DELETE(m_Camera)
 
 	// Release the D3D object.
-	if (m_D3D)
-	{
-		delete m_D3D;
-		m_D3D = 0;
-	}
+	SAFE_DELETE(m_D3D)
 
 }
 
 
 bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight)
 {
-	bool result;
-	float cameraX, cameraY, cameraZ;
-
-	//Create Input object
-	m_Input = new InputClass;
-	if (!m_Input)
-	{
-		return false;
-	}
-
-	// Initialize the input object.
-	result = m_Input->Initialize(hinstance, hwnd, screenWidth, screenHeight);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
-		return false;
-	}
+	HRESULT result;
+	float cameraX = 50.0f,
+		  cameraY = 1.0f,
+		  cameraZ = 25.0f;
 
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
@@ -160,8 +81,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	// Initialize the Direct3D object.
-	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
+	if(FAILED(result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR)))
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
 		return false;
@@ -175,8 +95,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	//Initialise the Terrain object
-	result = m_Terrain->Initialize(m_D3D->GetDevice(), "../Engine/data/Textures/heightmap01.bmp", L"../Engine/data/Textures/dirt01.dds", "../Engine/data/Textures/colorm01.bmp");
-	if (!result)
+	if(FAILED(result = m_Terrain->Initialize(m_D3D->GetDevice(), "../Engine/data/Textures/heightmap01.bmp", L"../Engine/data/Textures/dirt01.dds", "../Engine/data/Textures/colorm01.bmp")))
 	{
 		MessageBox(hwnd, L"Could not Initialize Terrain", L"Error", MB_OK);
 		return false;
@@ -190,8 +109,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	// Initialize theShader Manager object.
-	result = m_ShaderManager->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
+	if(FAILED(result = m_ShaderManager->Initialize(m_D3D->GetDevice(), hwnd)))
 	{
 		MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);
 		return false;
@@ -205,36 +123,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	// Set the initial position of the camera.
-	cameraX = 50.0f;
-	cameraY = 1.0f;
-	cameraZ = 25.0f;
-
 	m_Camera->SetPosition(cameraX, cameraY, cameraZ);
-
-	// Create the timer object.
-	m_Timer = new FrameTime;
-	if (!m_Timer)
-	{
-		return false;
-	}
-
-	// Initialize the timer object.
-	result = m_Timer->Initialise();
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the timer object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the position object.
-	m_Movement = new Movement;
-	if (!m_Movement)
-	{
-		return false;
-	}
-
-	// Set the initial position of the viewer to the same as the initial camera position.
-	m_Movement->SetPosition(cameraX, cameraY, cameraZ);
 
 	// Create the model object.
 	m_Model = new ModelClass;
@@ -244,25 +133,9 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	// Initialize the model object.
-	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/sphere.txt", L"../Engine/data/Textures/seafloor.dds");
-	if (!result)
+	if(FAILED(result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/sphere.txt", L"../Engine/data/Textures/seafloor.dds")))
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the Tree object.
-	m_Tree = new ModelClass;
-	if (!m_Tree)
-	{
-		return false;
-	}
-
-	// Initialize the Tree object.
-	result = m_Tree->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/cube.txt", L"../Engine/data/Textures/bark.dds");
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the Tree object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -274,8 +147,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	//Initialize the model
-	result = m_pAssimpModel->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/TiltedTree.obj");
-	if (!result)
+	if(FAILED(result = m_pAssimpModel->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/TiltedTree.obj")))
 	{
 		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
 		return false;
@@ -306,8 +178,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	// Initialize the sky dome object.
-	result = m_SkySphere->Initialize(m_D3D->GetDevice(), L"../Engine/data/Textures/skyMap.dds");
-	if (!result)
+	if(FAILED(result = m_SkySphere->Initialize(m_D3D->GetDevice(), L"../Engine/data/Textures/skyMap.dds")))
 	{
 		MessageBox(hwnd, L"Could not initialize the sky dome object.", L"Error", MB_OK);
 		return false;
@@ -323,8 +194,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	// Initialize the refraction render to texture object.
-	result = m_RefractionTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
+	if(FAILED(result = m_RefractionTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR)))
 	{
 		MessageBox(hwnd, L"Could not initialize the refraction render to texture object.", L"Error", MB_OK);
 		return false;
@@ -338,8 +208,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	// Initialize the reflection render to texture object.
-	result = m_ReflectionTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
+	if(FAILED(result = m_ReflectionTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR)))
 	{
 		MessageBox(hwnd, L"Could not initialize the reflection render to texture object.", L"Error", MB_OK);
 		return false;
@@ -355,8 +224,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	}
 
 	// Initialize the water object.
-	result = m_Water->Initialize(m_D3D->GetDevice(), L"../Engine/data/Textures/waternormal.dds", 0.5f, 30.0f);
-	if (!result)
+	if(FAILED(result = m_Water->Initialize(m_D3D->GetDevice(), L"../Engine/data/Textures/waternormal.dds", 0.5f, 30.0f)))
 	{
 		MessageBox(hwnd, L"Could not initialize the water object.", L"Error", MB_OK);
 		return false;
@@ -366,32 +234,8 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 
 bool GraphicsClass::Frame()
 {
-	bool result;
 	static float rotation = 0.0f;
 	static float delta = 0.0f;
-
-	// Read the user input.
-	result = m_Input->Frame();
-	if (!result)
-	{
-		return false;
-	}
-
-	// Check if the user pressed escape and wants to exit the application.
-	if (m_Input->IsEscapePressed())
-	{
-		return false;
-	}
-
-	// Update the system stats.
-	m_Timer->Frame();
-
-	// Do the frame input processing.
-	result = HandleInput(m_Timer->GetFPS());
-	if (!result)
-	{
-		return false;
-	}
 
 	// Update the rotation variable each frame. --- for cube model
 	rotation += (float)XM_PI * 0.05f;
@@ -421,8 +265,7 @@ bool GraphicsClass::Frame()
 	RenderReflectionToTexture(delta);
 
 	// Render the graphics.
-	result = Render(rotation, delta);
-	if (!result)
+	if (!Render(rotation, delta))
 	{
 		return false;
 	}
@@ -430,82 +273,11 @@ bool GraphicsClass::Frame()
 	return true;
 }
 
-bool GraphicsClass::HandleInput(float frameTime)
+void GraphicsClass::MoveCamera(XMFLOAT3 pos, XMFLOAT3 rot)
 {
-	bool keyDown, result;
-	float posX, posY, posZ, rotX, rotY, rotZ;
-
-	// Set the frame time for calculating the updated position.
-	m_Movement->SetFrameTime(frameTime);
-
-	///////////////////////////////////////////////////////////////////
-	
-	/*
-	// Handle the input. via keyboard
-	keyDown = m_Input->IsKeyPressedA();
-	m_Movement->TurnLeft(keyDown);
-
-	keyDown = m_Input->IsKeyPressedD();
-	m_Movement->TurnRight(keyDown);
-
-	keyDown = m_Input->IsKeyPressedW();
-	m_Movement->MoveForward(keyDown);
-
-	keyDown = m_Input->IsKeyPressedS();
-	m_Movement->MoveBackward(keyDown);
-
-	keyDown = m_Input->IsUpPressed();
-	m_Movement->LookUpward(keyDown);
-
-	keyDown = m_Input->IsDownPressed();
-	m_Movement->LookDownward(keyDown);
-
-	keyDown = m_Input->IsLeftPressed();
-	m_Movement->MoveUpward(keyDown);
-
-	keyDown = m_Input->IsRightPressed();
-	m_Movement->MoveDownward(keyDown);
-	*/
-
-	///////////////////////////////////////////////////////////////////
-
-	//Movement via keyboard being used
-	keyDown = m_Input->IsKeyPressedW();
-	m_Movement->MoveForward(keyDown);
-
-	keyDown = m_Input->IsKeyPressedS();
-	m_Movement->MoveBackward(keyDown);
-
-	keyDown = m_Input->IsKeyPressedA();
-	m_Movement->MoveUpward(keyDown);
-
-	keyDown = m_Input->IsKeyPressedD();
-	m_Movement->MoveDownward(keyDown);
-
-	///////////////////////////////////////////////////////////////////
-
-	// Camera Rotation via Mouse
-	XMFLOAT3 Rot, tempRot;
-
-	Rot = m_Input->GetMouseMovement();
-	tempRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-
-	tempRot.x += Rot.x * 1 / 10;
-	tempRot.y += Rot.y * 1 / 10;
-	m_Movement->RotateCamera(tempRot);
-	
-	///////////////////////////////////////////////////////////////////
-
-	// Getter Setter
-	// Get the view point position/rotation.
-	m_Movement->GetPosition(posX, posY, posZ);
-	m_Movement->GetRotation(rotX, rotY, rotZ);
-
 	// Set the position of the camera.
-	m_Camera->SetPosition(posX, posY, posZ);
-	m_Camera->SetRotation(rotX, rotY, rotZ);
-
-	return true;
+	m_Camera->SetPosition(pos.x, pos.y, pos.z);
+	m_Camera->SetRotation(rot.x, rot.y, rot.z);
 }
 
 void GraphicsClass::RenderRefractionToTexture()
@@ -613,14 +385,6 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
-	m_Tree->Render(m_D3D->GetDeviceContext());
-	m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
-		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
-
-	// Reset the world matrix.
-	worldMatrix = m_D3D->GetWorldMatrix();
-
 	for each (AssimpModelClass* p in m_AssimpModel)
 	{
 		for (int i = 0; i < p->m_Meshes.size(); i++)
@@ -631,7 +395,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 		// Try rendering the assimp model using the light shader.
 		m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, reflectionViewMatrix, projectionMatrix,
 			m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
+			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
 	}
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
@@ -767,33 +531,10 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 		return false;
 	}
 
-	/*
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
-
-	//render the second instance of model class called tree
-	m_Tree->Render(m_D3D->GetDeviceContext());
-
-	//Position the tree cube
-	modelTranslateMatrix = XMMatrixTranslation(100.0f, 5.0f, 80.0f);
-	modelScaleMatrix = XMMatrixScaling(4.0f, 4.0f, 4.0f);
-	worldMatrix = XMMatrixMultiply(modelScaleMatrix, modelTranslateMatrix);
-
-	// Render the Tree cube using the light shader.
-	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Tree->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
-
-	//check if the tree cube rendered properly
-	if (!result)
-	{
-		return false;
-	}
-	*/
-
-	// Reset the world matrix.
-	worldMatrix = m_D3D->GetWorldMatrix();
-
+	
+	//Render the tree
 	for each (AssimpModelClass* p in m_AssimpModel)
 	{
 		//Try rendering the assimp model
@@ -809,7 +550,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 		// Try rendering the assimp model using the light shader.
 		result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, viewMatrix, projectionMatrix,
 			m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Tree->GetTexture());
+			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
 	}
 
 	// Present the rendered scene to the screen.

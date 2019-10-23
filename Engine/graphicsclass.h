@@ -7,11 +7,6 @@
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "lightclass.h"
-#include "inputclass.h"
-
-//Movement
-#include "Movement.h"
-#include "FrameTime.h"
 
 //Models
 #include "waterclass.h"
@@ -24,6 +19,8 @@
 #include "ShaderManagerClass.h"
 #include "rendertextureclass.h"
 
+//Utils
+#include "Utils.h"
 
 
 // GLOBALS 
@@ -41,10 +38,9 @@ public:
 
 	bool Initialize(HINSTANCE, HWND, int, int);
 	bool Frame();
+	void MoveCamera(XMFLOAT3 pos, XMFLOAT3 rot);
 
 private:
-	bool HandleInput(float);
-
 	void RenderRefractionToTexture();
 	void RenderReflectionToTexture(float);
 
@@ -55,14 +51,9 @@ private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	LightClass* m_Light;
-	InputClass* m_Input;
-
-	Movement* m_Movement;
-	FrameTime* m_Timer;
 
 	std::vector<AssimpModelClass*> m_AssimpModel;
 	ModelClass* m_Model;
-	ModelClass* m_Tree;
 	TerrainClass* m_Terrain;
 	skySphere* m_SkySphere;
 	WaterClass* m_Water;

@@ -4,10 +4,9 @@
 
 SystemClass::SystemClass()
 {
-	m_Graphics = 0;
-
-	//initialise sound
-	m_Sound = 0;
+	m_Graphics = nullptr;
+	m_Sound = nullptr;
+	m_Input = nullptr;
 }
 
 
@@ -19,18 +18,13 @@ SystemClass::SystemClass(const SystemClass& other)
 SystemClass::~SystemClass()
 {
 	// Release the sound object.
-	if (m_Sound)
-	{
-		delete m_Sound;
-		m_Sound = 0;
-	}
+	SAFE_DELETE(m_Sound)
 
 	// Release the graphics object.
-	if (m_Graphics)
-	{
-		delete m_Graphics;
-		m_Graphics = 0;
-	}
+	SAFE_DELETE(m_Graphics)
+
+	// Release the input object.
+	SAFE_DELETE(m_Input)
 
 	// Shutdown the window.
 	ShutdownWindows();
@@ -40,7 +34,7 @@ SystemClass::~SystemClass()
 bool SystemClass::Initialize()
 {
 	int screenWidth, screenHeight;
-	bool result;
+	HRESULT result;
 
 
 	// Initialize the width and height of the screen to zero before sending the variables into the function.
@@ -50,6 +44,32 @@ bool SystemClass::Initialize()
 	// Initialize the windows api.
 	InitializeWindows(screenWidth, screenHeight);
 
+	m_Input = new InputClass;
+	if (!m_Input)
+	{
+		return false;
+	}
+
+	if(FAILED(result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight)))
+	{
+		MessageBox(m_hwnd, L"Could not initialize Input.", L"Error", MB_OK);
+		return false;
+	}
+
+	//once it is initialised, sound will automatically start playing
+	m_Sound = new Sound;
+	if (!m_Sound)
+	{
+		return false;
+	}
+
+	// Initialize the sound object.
+	if(FAILED(result = m_Sound->Initialize(m_hwnd)))
+	{
+		MessageBox(m_hwnd, L"Could not initialize Direct Sound.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new GraphicsClass;
 	if(!m_Graphics)
@@ -58,25 +78,8 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = m_Graphics->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
-	if(!result)
+	if(FAILED(result = m_Graphics->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight)))
 	{
-		return false;
-	}
-	
-	//once it is initialised, sound will automatically start playing
-	// Create the sound object.
-	m_Sound = new Sound;
-	if (!m_Sound)
-	{
-		return false;
-	}
-
-	// Initialize the sound object.
-	result = m_Sound->Initialize(m_hwnd);
-	if (!result)
-	{
-		MessageBox(m_hwnd, L"Could not initialize Direct Sound.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -115,7 +118,6 @@ void SystemClass::Run()
 			result = Frame();
 			if(!result)
 			{
-				//MessageBox(m_hwnd, L"Frame Processing Failed", L"Error", MB_OK);
 				done = true;
 			}
 		}
@@ -127,14 +129,13 @@ void SystemClass::Run()
 
 bool SystemClass::Frame()
 {
-	bool result;
+
+	if (!m_Input->Frame()) { return false; }
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame();
-	if(!result)
-	{
-		return false;
-	}
+	if(!m_Graphics->Frame()) { return false; }
+
+	m_Graphics->MoveCamera(m_Input->GetPos(), m_Input->GetRot());
 
 	return true;
 }
@@ -142,6 +143,11 @@ bool SystemClass::Frame()
 
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
+	//Add raw input for mouse here
+	/* the raw input messages will be caught here.
+	 * as i understand it, i suppose, i will have to either send, the movement to the graphics class
+	 * and then process it in the handle input function there.*/
+
 	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 
@@ -252,7 +258,6 @@ void SystemClass::ShutdownWindows()
 
 	return;
 }
-
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {

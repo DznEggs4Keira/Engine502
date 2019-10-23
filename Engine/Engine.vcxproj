@@ -137,6 +137,7 @@
     <ClInclude Include="terrainclass.h" />
     <ClInclude Include="terrainshaderclass.h" />
     <ClInclude Include="textureclass.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="waterclass.h" />
     <ClInclude Include="watershaderclass.h" />
   </ItemGroup>
