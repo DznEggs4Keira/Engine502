@@ -2,14 +2,16 @@
 
 AssimpModelClass::AssimpModelClass()
 {
-	m_device = 0;
+	m_device = nullptr;
+	m_Texture = nullptr;
 }
 
 AssimpModelClass::~AssimpModelClass()
 {
+	SAFE_DELETE(m_Texture)
 }
 
-bool AssimpModelClass::Initialize(ID3D11Device* device, const std::string & modelFilename)
+bool AssimpModelClass::Initialize(ID3D11Device* device, const std::string & modelFilename, WCHAR* texFilename)
 {
 	bool result;
 
@@ -21,6 +23,19 @@ bool AssimpModelClass::Initialize(ID3D11Device* device, const std::string & mode
 	{
 		return false;
 	}
+
+	result = LoadTexture(device, texFilename);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+ID3D11ShaderResourceView * AssimpModelClass::GetTexture()
+{
+	return m_Texture->GetTexture();
 }
 
 bool AssimpModelClass::LoadModel(const std::string & filename)
@@ -97,6 +112,27 @@ MeshClass* AssimpModelClass::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	// Create mesh
 	MeshClass *m_Meshes = new MeshClass(m_device, vertices, indices); //Calls initialise in mesh class
 	return m_Meshes;
+}
+
+bool AssimpModelClass::LoadTexture(ID3D11Device* device, WCHAR* filename)
+{
+	bool result;
+
+	// Create the texture object.
+	m_Texture = new TextureClass;
+	if (!m_Texture)
+	{
+		return false;
+	}
+
+	// Initialize the texture object.
+	result = m_Texture->Initialize(device, filename);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 

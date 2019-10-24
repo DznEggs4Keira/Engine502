@@ -7,6 +7,7 @@
 
 // INCLUDES 
 #include <windows.h>
+#include <windowsx.h>
 
 // MY CLASS INCLUDES
 #include "graphicsclass.h"

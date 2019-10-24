@@ -105,6 +105,9 @@
     <ClCompile Include="AssimpModelClass.cpp">
       <Filter>Models\Source</Filter>
     </ClCompile>
+    <ClCompile Include="ModelManagerClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cameraclass.h">
@@ -177,6 +180,9 @@
       <Filter>Models\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManagerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

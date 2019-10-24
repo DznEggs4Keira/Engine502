@@ -18,11 +18,11 @@ InputClass::InputClass(const InputClass& other)
 
 InputClass::~InputClass()
 {
-	// Release the mouse.
+	// release the mouse.
 	m_mouse->Unacquire();
 	SAFE_RELEASE(m_mouse)
 
-	// Release the main interface to direct input.
+	// release the main interface to direct input.
 	SAFE_RELEASE(m_directInput)
 
 	SAFE_DELETE(pTimer)
@@ -34,7 +34,6 @@ InputClass::~InputClass()
 bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight)
 {
 	HRESULT result;
-
 
 	// Store the screen size which will be used for positioning the mouse cursor.
 	m_screenWidth = screenWidth;
@@ -113,7 +112,7 @@ XMFLOAT3 InputClass::GetMouseMovement()
 #pragma region Frame
 
 bool InputClass::Frame()
-{
+{	
 	// Read the current state of the mouse.
 	if (!ReadMouse())
 	{
@@ -126,32 +125,21 @@ bool InputClass::Frame()
 	// Update the system stats.
 	pTimer->Frame();
 
-	if (!HandleInput())
-	{
-		return false;
-	}
+	HandleInput();
 
 	return true;
 }
 
-bool InputClass::HandleInput()
+void InputClass::HandleInput()
 {
 	// Set the frame time for calculating the updated position.
 	pMovement->SetFrameTime(pTimer->GetFPS());
-
-	// Check if the user pressed escape and wants to exit the application.
-	if (IsEscapePressed())
-	{
-		return false;
-	}
 
 	//Movement via keyboard being used
 	pMovement->MoveForward(IsKeyPressedW());
 	pMovement->MoveBackward(IsKeyPressedS());
 	pMovement->MoveUpward(IsKeyPressedA());
 	pMovement->MoveDownward(IsKeyPressedD());
-
-	///////////////////////////////////////////////////////////////////
 
 	// Camera Rotation via Mouse
 	XMFLOAT3 Rot, tempRot;
@@ -162,10 +150,6 @@ bool InputClass::HandleInput()
 	tempRot.x += Rot.x * 1 / 10;
 	tempRot.y += Rot.y * 1 / 10;
 	pMovement->RotateCamera(tempRot);
-
-	///////////////////////////////////////////////////////////////////
-
-	return true;
 }
 
 bool InputClass::ReadMouse()
@@ -207,17 +191,6 @@ void InputClass::ProcessInput()
 #pragma endregion
 
 #pragma region KeyPresses
-
-bool InputClass::IsEscapePressed()
-{
-	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
-	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
-	{
-		return true;
-	}
-
-	return false;
-}
 
 bool InputClass::IsKeyPressedW()
 {

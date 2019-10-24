@@ -39,8 +39,6 @@ public:
 
 private:
 
-	bool IsEscapePressed();
-
 	//keyboard movement with W A S D
 	bool IsKeyPressedW();
 	bool IsKeyPressedA();
@@ -52,7 +50,7 @@ private:
 	bool ReadMouse();
 	void ProcessInput();
 
-	bool HandleInput();
+	void HandleInput();
 
 private:
 	IDirectInput8* m_directInput;

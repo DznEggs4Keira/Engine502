@@ -148,7 +148,13 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 	 * as i understand it, i suppose, i will have to either send, the movement to the graphics class
 	 * and then process it in the handle input function there.*/
 
-	return DefWindowProc(hwnd, umsg, wparam, lparam);
+	switch (umsg)
+	{
+		default:
+		{
+			return DefWindowProc(hwnd, umsg, wparam, lparam);
+		}
+	}
 }
 
 
@@ -265,18 +271,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 	{
 		// Check if the window is being destroyed.
 		case WM_DESTROY:
-		{
-			PostQuitMessage(0);
-			return 0;
-		}
-
 		// Check if the window is being closed.
 		case WM_CLOSE:
 		{
 			PostQuitMessage(0);		
 			return 0;
 		}
-
+		case WM_KEYUP:
+		{
+			if (wparam == VK_ESCAPE)
+			{
+				PostQuitMessage(0);
+				return 0;
+			}
+		}
 		// All other messages pass to the message handler in the system class.
 		default:
 		{

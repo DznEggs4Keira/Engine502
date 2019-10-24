@@ -8,12 +8,9 @@ GraphicsClass::GraphicsClass()
 	m_Camera = nullptr;
 	m_Light = nullptr;
 
-	m_Model = nullptr;
-	m_SkySphere = nullptr;
-	m_Terrain = nullptr;
-	m_Water = nullptr;
+	m_pModelManager = nullptr;
 
-	m_ShaderManager = nullptr;
+	m_pShaderManager = nullptr;
 	m_RefractionTexture = nullptr;
 	m_ReflectionTexture = nullptr;
 }
@@ -27,10 +24,9 @@ GraphicsClass::GraphicsClass(const GraphicsClass& other)
 GraphicsClass::~GraphicsClass()
 {
 	// Release the water shader object.
-	SAFE_DELETE(m_ShaderManager)
+	SAFE_DELETE(m_pShaderManager)
 
-	// Release the water object.
-	SAFE_DELETE(m_Water)
+	SAFE_DELETE(m_pModelManager)
 
 	// Release the reflection render to texture object.
 	SAFE_DELETE(m_ReflectionTexture)
@@ -38,24 +34,8 @@ GraphicsClass::~GraphicsClass()
 	// Release the refraction render to texture object.
 	SAFE_DELETE(m_RefractionTexture)
 
-	//Release the terrain object.
-	SAFE_DELETE(m_Terrain)
-
-	// Release the sky dome object.
-	SAFE_DELETE(m_SkySphere)
-
 	// Release the light object.
 	SAFE_DELETE(m_Light)
-
-	// Release the model object.
-	SAFE_DELETE(m_Model)
-
-	// Release Assimp Model
-	for each (AssimpModelClass* p in m_AssimpModel)
-	{
-		delete p;
-		p = 0;
-	}
 
 	// Release the camera object.
 	SAFE_DELETE(m_Camera)
@@ -87,29 +67,15 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	// Create the Terrain object.
-	m_Terrain = new TerrainClass;
-	if (!m_Terrain)
-	{
-		return false;
-	}
-
-	//Initialise the Terrain object
-	if(FAILED(result = m_Terrain->Initialize(m_D3D->GetDevice(), "../Engine/data/Textures/heightmap01.bmp", L"../Engine/data/Textures/dirt01.dds", "../Engine/data/Textures/colorm01.bmp")))
-	{
-		MessageBox(hwnd, L"Could not Initialize Terrain", L"Error", MB_OK);
-		return false;
-	}
-
 	// Create the Shader Manager object.
-	m_ShaderManager = new ShaderManagerClass;
-	if (!m_ShaderManager)
+	m_pShaderManager = new ShaderManagerClass;
+	if (!m_pShaderManager)
 	{
 		return false;
 	}
 
 	// Initialize theShader Manager object.
-	if(FAILED(result = m_ShaderManager->Initialize(m_D3D->GetDevice(), hwnd)))
+	if(FAILED(result = m_pShaderManager->Initialize(m_D3D->GetDevice(), hwnd)))
 	{
 		MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);
 		return false;
@@ -125,36 +91,6 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(cameraX, cameraY, cameraZ);
 
-	// Create the model object.
-	m_Model = new ModelClass;
-	if (!m_Model)
-	{
-		return false;
-	}
-
-	// Initialize the model object.
-	if(FAILED(result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/sphere.txt", L"../Engine/data/Textures/seafloor.dds")))
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
-
-	//Load attempt the assim model
-	AssimpModelClass *m_pAssimpModel = new AssimpModelClass();
-	if (!m_pAssimpModel)
-	{
-		return false;
-	}
-
-	//Initialize the model
-	if(FAILED(result = m_pAssimpModel->Initialize(m_D3D->GetDevice(), "../Engine/data/Models/TiltedTree.obj")))
-	{
-		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
-		return false;
-	}
-
-	m_AssimpModel.push_back(m_pAssimpModel);
-
 	// Create the light object.
 	m_Light = new LightClass;
 	if (!m_Light)
@@ -169,20 +105,6 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	m_Light->SetDirection(1.0f, 0.0f, 1.0f);
 	m_Light->SetSpecularColor(1.0f, 0.0f, 0.0f, 1.0f);
 	m_Light->SetSpecularPower(60.0f);
-
-	// Create the sky dome object.
-	m_SkySphere = new skySphere;
-	if (!m_SkySphere)
-	{
-		return false;
-	}
-
-	// Initialize the sky dome object.
-	if(FAILED(result = m_SkySphere->Initialize(m_D3D->GetDevice(), L"../Engine/data/Textures/skyMap.dds")))
-	{
-		MessageBox(hwnd, L"Could not initialize the sky dome object.", L"Error", MB_OK);
-		return false;
-	}
 
 	//Setup render to textures for the refraction and reflection of the scene.
 
@@ -214,21 +136,19 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	//Setup the WaterClass and WaterShaderClass objects.
-
-	// Create the water object.
-	m_Water = new WaterClass;
-	if (!m_Water)
+	m_pModelManager = new ModelManagerClass;
+	if (!m_pModelManager)
 	{
 		return false;
 	}
 
-	// Initialize the water object.
-	if(FAILED(result = m_Water->Initialize(m_D3D->GetDevice(), L"../Engine/data/Textures/waternormal.dds", 0.5f, 30.0f)))
+	result = m_pModelManager->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hinstance, hwnd, screenWidth, screenHeight);
+	if (FAILED(result))
 	{
-		MessageBox(hwnd, L"Could not initialize the water object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the Models.", L"Error", MB_OK);
 		return false;
 	}
+
 	return true;
 }
 
@@ -251,18 +171,13 @@ bool GraphicsClass::Frame()
 		delta -= 1.0f;
 	}
 
-	// Do the water frame processing.
-	m_Water->Frame();
-
-	/*There are three render steps. First render the refraction of the scene to a texture.
-	Next render the reflection of the scene to a texture.
-	Finally render the entire scene using the refraction and reflection textures.*/
+	m_pModelManager->Frame();
 
 	// Render the refraction of the scene to a texture.
 	RenderRefractionToTexture();
 
 	// Render the reflection of the scene to a texture.
-	RenderReflectionToTexture(delta);
+	RenderReflectionToTexture(rotation, delta);
 
 	// Render the graphics.
 	if (!Render(rotation, delta))
@@ -287,7 +202,7 @@ void GraphicsClass::RenderRefractionToTexture()
 
 
 	// Setup a clipping plane based on the height of the water to clip everything above it to create a refraction.
-	clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, m_Water->GetWaterHeight() + 0.1f);
+	clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, m_pModelManager->m_Water->GetWaterHeight() + 0.1f);
 
 	// Set the render target to be the refraction render to texture.
 	m_RefractionTexture->SetRenderTarget(m_D3D->GetDeviceContext());
@@ -304,9 +219,10 @@ void GraphicsClass::RenderRefractionToTexture()
 	projectionMatrix = m_D3D->GetProjectionMatrix();
 
 	// Render the terrain using the reflection shader and the refraction clip plane to produce the refraction effect.
-	m_Terrain->Render(m_D3D->GetDeviceContext());
-	m_ShaderManager->RenderReflectionShader(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_Terrain->GetTexture(),
+	m_pModelManager->RenderTerrain();
+
+	m_pShaderManager->RenderReflectionShader(m_D3D->GetDeviceContext(), m_pModelManager->m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_pModelManager->m_Terrain->GetTexture(),
 		clipPlane);
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
@@ -318,15 +234,21 @@ void GraphicsClass::RenderRefractionToTexture()
 	return;
 }
 
-void GraphicsClass::RenderReflectionToTexture(float deltavalue)
+void GraphicsClass::RenderReflectionToTexture(float rotation, float deltavalue)
 {
 	XMFLOAT4 clipPlane;
 	XMMATRIX reflectionViewMatrix, worldMatrix, projectionMatrix;
+	XMMATRIX modelTranslateMatrix, modelWorldMatrix, modelScaleMatrix;
 	XMFLOAT3 cameraPosition;
 
 
+	//add new variables which control in what axis the cube rotates
+	float rotationX = rotation * 0.02f;
+	float rotationY = rotation * 0.03f;
+	float rotationZ = rotation * 0.4f;
+
 	// Setup a clipping plane based on the height of the water to clip everything below it.
-	clipPlane = XMFLOAT4(0.0f, 1.0f, 0.0f, -m_Water->GetWaterHeight());
+	clipPlane = XMFLOAT4(0.0f, 1.0f, 0.0f, -m_pModelManager->m_Water->GetWaterHeight());
 
 	// Set the render target to be the reflection render to texture.
 	m_ReflectionTexture->SetRenderTarget(m_D3D->GetDeviceContext());
@@ -335,7 +257,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	m_ReflectionTexture->ClearRenderTarget(m_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Use the camera to render the reflection and create a reflection view matrix.
-	m_Camera->RenderReflection(m_Water->GetWaterHeight());
+	m_Camera->RenderReflection(m_pModelManager->m_Water->GetWaterHeight());
 
 	// Get the camera reflection view matrix instead of the normal view matrix.
 	reflectionViewMatrix = m_Camera->GetReflectionViewMatrix();
@@ -348,7 +270,7 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	cameraPosition = m_Camera->GetPosition();
 
 	// Invert the Y coordinate of the camera around the water plane height for the reflected camera position.
-	cameraPosition.y = -cameraPosition.y + (m_Water->GetWaterHeight() * 2.0f);
+	cameraPosition.y = -cameraPosition.y + (m_pModelManager->m_Water->GetWaterHeight() * 2.0f);
 
 	// Translate the sky dome and sky plane to be centered around the reflected camera position.
 	worldMatrix = XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z);
@@ -358,9 +280,9 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	m_D3D->TurnZBufferOff();
 
 	// Render the sky dome using the reflection view matrix.
-	m_SkySphere->Render(m_D3D->GetDeviceContext());
-	m_ShaderManager->RenderSkySphereShader(m_D3D->GetDeviceContext(), m_SkySphere->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
-		m_SkySphere->GetApexColor(), m_SkySphere->GetCenterColor(), m_SkySphere->GetTexture());
+	m_pModelManager->RenderSkySphere();
+	m_pShaderManager->RenderSkySphereShader(m_D3D->GetDeviceContext(), m_pModelManager->m_SkySphere->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+		m_pModelManager->m_SkySphere->GetApexColor(), m_pModelManager->m_SkySphere->GetCenterColor(), m_pModelManager->m_SkySphere->GetTexture());
 
 	// Enable back face culling.
 	m_D3D->TurnOnCulling();
@@ -370,32 +292,43 @@ void GraphicsClass::RenderReflectionToTexture(float deltavalue)
 	worldMatrix = m_D3D->GetWorldMatrix();
 
 	// Render the terrain using the reflection view matrix and reflection clip plane.
-	m_Terrain->Render(m_D3D->GetDeviceContext());
-	m_ShaderManager->RenderReflectionShader(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
-		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_Terrain->GetTexture(), clipPlane);
+	m_pModelManager->RenderTerrain();
+	m_pShaderManager->RenderReflectionShader(m_D3D->GetDeviceContext(), m_pModelManager->m_Terrain->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_pModelManager->m_Terrain->GetTexture(), clipPlane);
 
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
-	m_Model->Render(m_D3D->GetDeviceContext());
-	m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
-		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
+	// Rotate the world matrix by the rotation value so that the sphere will spin.
+	modelWorldMatrix = XMMatrixRotationRollPitchYaw(rotationX, rotationY, rotationZ);
+	modelScaleMatrix = XMMatrixTranslation(0.05f, 0.05f, 0.05f);
+	modelTranslateMatrix = XMMatrixTranslation(50.0f, 10.0f, 50.0f);
+	worldMatrix = XMMatrixMultiply(XMMatrixMultiply(modelWorldMatrix, modelScaleMatrix), modelTranslateMatrix);
 
-	// Reset the world matrix.
-	worldMatrix = m_D3D->GetWorldMatrix();
-
-	for each (AssimpModelClass* p in m_AssimpModel)
+	for each(AssimpModelClass* p in m_pModelManager->m_Polyhedron)
 	{
-		for (int i = 0; i < p->m_Meshes.size(); i++)
-		{
-			p->m_Meshes.at(i)->Render(m_D3D->GetDeviceContext());
-		}
+		m_pModelManager->RenderAssimpModel(p);
 
 		// Try rendering the assimp model using the light shader.
-		m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+		m_pShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, reflectionViewMatrix, projectionMatrix,
 			m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
+			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, p->GetTexture());
+	}
+
+	// Reset the world matrix.
+	worldMatrix = m_D3D->GetWorldMatrix();
+
+	modelTranslateMatrix = XMMatrixTranslation(100.0f, 20.0f, 100.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, modelTranslateMatrix);
+
+	for each (AssimpModelClass* p in m_pModelManager->m_Tree)
+	{
+		m_pModelManager->RenderAssimpModel(p);
+
+		// Try rendering the assimp model using the light shader.
+		m_pShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+			m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, p->GetTexture());
 	}
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
@@ -429,7 +362,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	m_Camera->Render();
 
 	// Generate the reflection matrix based on the camera's position and the height of the water.
-	m_Camera->RenderReflection(m_Water->GetWaterHeight());
+	m_Camera->RenderReflection(m_pModelManager->m_Water->GetWaterHeight());
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	viewMatrix = m_Camera->GetViewMatrix();
@@ -455,11 +388,11 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	m_D3D->TurnZBufferOff();
 
 	//Render the Sphere
-	m_SkySphere->Render(m_D3D->GetDeviceContext());
+	m_pModelManager->RenderSkySphere();
 
 	// Render the sky sphere using the sky sphere shader.
-	result = m_ShaderManager->RenderSkySphereShader(m_D3D->GetDeviceContext(), m_SkySphere->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_SkySphere->GetApexColor(), m_SkySphere->GetCenterColor(), m_SkySphere->GetTexture());
+	result = m_pShaderManager->RenderSkySphereShader(m_D3D->GetDeviceContext(), m_pModelManager->m_SkySphere->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_pModelManager->m_SkySphere->GetApexColor(), m_pModelManager->m_SkySphere->GetCenterColor(), m_pModelManager->m_SkySphere->GetTexture());
 
 	//check if sky sphere rendered successfully
 	if (!result)
@@ -476,11 +409,11 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	worldMatrix = m_D3D->GetWorldMatrix();
 
 	// Render the terrain buffers.
-	m_Terrain->Render(m_D3D->GetDeviceContext());
+	m_pModelManager->RenderTerrain();
 
 	// Render the terrain using the terrain shader.
-	result = m_ShaderManager->RenderTerrainShader(m_D3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_Terrain->GetTexture());
+	result = m_pShaderManager->RenderTerrainShader(m_D3D->GetDeviceContext(), m_pModelManager->m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_pModelManager->m_Terrain->GetTexture());
 	
 	//check if terrain rendered successfully
 	if (!result)
@@ -493,39 +426,19 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 
 	// Translate to the location of the water and render it.
 
-	modelTranslateMatrix = XMMatrixTranslation(40.0f, m_Water->GetWaterHeight(), 50.0f);
+	modelTranslateMatrix = XMMatrixTranslation(40.0f, m_pModelManager->m_Water->GetWaterHeight(), 50.0f);
 	worldMatrix = XMMatrixMultiply(worldMatrix, modelTranslateMatrix);
 
 	//Render water
-	m_Water->Render(m_D3D->GetDeviceContext());
+	m_pModelManager->RenderWater();
 
 	//using water shader
-	result = m_ShaderManager->RenderWaterShader(m_D3D->GetDeviceContext(), m_Water->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
-		m_RefractionTexture->GetShaderResourceView(), m_ReflectionTexture->GetShaderResourceView(), m_Water->GetTexture(),
-		m_Camera->GetPosition(), m_Water->GetNormalMapTiling(), m_Water->GetWaterTranslation(), m_Water->GetReflectRefractScale(),
-		m_Water->GetRefractionTint(), m_Light->GetDirection(), m_Water->GetSpecularShininess());
+	result = m_pShaderManager->RenderWaterShader(m_D3D->GetDeviceContext(), m_pModelManager->m_Water->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
+		m_RefractionTexture->GetShaderResourceView(), m_ReflectionTexture->GetShaderResourceView(), m_pModelManager->m_Water->GetTexture(),
+		m_Camera->GetPosition(), m_pModelManager->m_Water->GetNormalMapTiling(), m_pModelManager->m_Water->GetWaterTranslation(), m_pModelManager->m_Water->GetReflectRefractScale(),
+		m_pModelManager->m_Water->GetRefractionTint(), m_Light->GetDirection(), m_pModelManager->m_Water->GetSpecularShininess());
 
 	//check if water rendered successfully
-	if (!result)
-	{
-		return false;
-	}
-	
-	// Rotate the world matrix by the rotation value so that the sphere will spin.
-	//XMMATRIXRotationY(&worldMatrix, rotationY);
-	modelWorldMatrix = XMMatrixRotationRollPitchYaw(rotationX, rotationY, rotationZ);
-	modelTranslateMatrix = XMMatrixTranslation(50.0f, 10.0f, 50.0f);
-	modelWorldMatrix = XMMatrixMultiply(modelWorldMatrix, modelTranslateMatrix);
-
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Model->Render(m_D3D->GetDeviceContext());
-
-	// Render the model using the light shader.
-	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), modelWorldMatrix, viewMatrix, projectionMatrix,
-		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
-
-	//check if sphere rendered successfully
 	if (!result)
 	{
 		return false;
@@ -533,24 +446,37 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
-	
-	//Render the tree
-	for each (AssimpModelClass* p in m_AssimpModel)
-	{
-		//Try rendering the assimp model
-		for (int i = 0; i < p->m_Meshes.size(); i++)
-		{
-			p->m_Meshes[i]->Render(m_D3D->GetDeviceContext());
-		}
 
-		//modelWorldMatrix = XMMatrixRotationRollPitchYaw(rotationX, rotationY, rotationZ);
-		modelTranslateMatrix = XMMatrixTranslation(100.0f, 20.0f, 100.0f);
-		worldMatrix = XMMatrixMultiply(worldMatrix, modelTranslateMatrix);
+	// Rotate the world matrix by the rotation value so that the sphere will spin.
+	modelWorldMatrix = XMMatrixRotationRollPitchYaw(rotationX, rotationY, rotationZ);
+	modelScaleMatrix = XMMatrixTranslation(0.05f, 0.05f, 0.05f);
+	modelTranslateMatrix = XMMatrixTranslation(50.0f, 10.0f, 50.0f);
+	worldMatrix = XMMatrixMultiply(XMMatrixMultiply(modelWorldMatrix, modelScaleMatrix), modelTranslateMatrix);
+
+	for each(AssimpModelClass* p in m_pModelManager->m_Polyhedron)
+	{
+		m_pModelManager->RenderAssimpModel(p);
 
 		// Try rendering the assimp model using the light shader.
-		result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, viewMatrix, projectionMatrix,
+		m_pShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, viewMatrix, projectionMatrix,
 			m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, m_Model->GetTexture());
+			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, p->GetTexture());
+	}
+
+	// Reset the world matrix.
+	worldMatrix = m_D3D->GetWorldMatrix();
+
+	modelTranslateMatrix = XMMatrixTranslation(100.0f, 20.0f, 100.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, modelTranslateMatrix);
+
+	for each (AssimpModelClass* p in m_pModelManager->m_Tree)
+	{
+		m_pModelManager->RenderAssimpModel(p);
+
+		// Try rendering the assimp model using the light shader.
+		m_pShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), p->indices.size(), worldMatrix, viewMatrix, projectionMatrix,
+			m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+			m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower(), deltavalue, p->GetTexture());
 	}
 
 	// Present the rendered scene to the screen.

@@ -109,7 +109,30 @@ void Movement::RotateCamera(XMFLOAT3 rotation)
 		m_rotation.y += 360.0f;
 	else if (m_rotation.y > 360.0f)
 		m_rotation.y -= 360.0f;
+}
 
+void Movement::Rotate(const float fXOffset, const float fYOffset)
+{
+	m_rotation.x += fYOffset;
+	m_rotation.y += fXOffset;
+
+	if (m_rotation.x < -XM_PIDIV2)
+	{
+		m_rotation.x = -XM_PIDIV2;
+	}
+	else if (m_rotation.x > XM_PIDIV2)
+	{
+		m_rotation.x = XM_PIDIV2;
+	}
+
+	if (m_rotation.y < 0)
+	{
+		m_rotation.y += XM_2PI;
+	}
+	else if (m_rotation.y > XM_2PI)
+	{
+		m_rotation.y -= XM_2PI;
+	}
 }
 
 void Movement::MoveUpward(bool keydown)

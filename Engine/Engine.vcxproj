@@ -101,6 +101,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeshClass.cpp" />
     <ClCompile Include="modelclass.cpp" />
+    <ClCompile Include="ModelManagerClass.cpp" />
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="reflectionshaderclass.cpp" />
     <ClCompile Include="rendertextureclass.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="lightshaderclass.h" />
     <ClInclude Include="MeshClass.h" />
     <ClInclude Include="modelclass.h" />
+    <ClInclude Include="ModelManagerClass.h" />
     <ClInclude Include="Movement.h" />
     <ClInclude Include="reflectionshaderclass.h" />
     <ClInclude Include="rendertextureclass.h" />

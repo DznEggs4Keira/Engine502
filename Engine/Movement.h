@@ -24,6 +24,7 @@ public:
 	void MoveUpward(bool);
 	void MoveDownward(bool);
 	void RotateCamera(XMFLOAT3);
+	void Rotate(const float, const float);
 
 private:
 	XMFLOAT3 m_position, m_rotation;

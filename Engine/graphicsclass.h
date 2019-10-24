@@ -8,12 +8,8 @@
 #include "cameraclass.h"
 #include "lightclass.h"
 
-//Models
-#include "waterclass.h"
-#include "terrainclass.h"
-#include "skySphere.h"
-#include "modelclass.h"
-#include "AssimpModelClass.h"
+//Model
+#include "ModelManagerClass.h"
 
 //Shader
 #include "ShaderManagerClass.h"
@@ -42,7 +38,7 @@ public:
 
 private:
 	void RenderRefractionToTexture();
-	void RenderReflectionToTexture(float);
+	void RenderReflectionToTexture(float, float);
 
 	bool Render(float, float);
 
@@ -52,15 +48,9 @@ private:
 	CameraClass* m_Camera;
 	LightClass* m_Light;
 
-	std::vector<AssimpModelClass*> m_AssimpModel;
-	ModelClass* m_Model;
-	TerrainClass* m_Terrain;
-	skySphere* m_SkySphere;
-	WaterClass* m_Water;
+	ModelManagerClass* m_pModelManager;
 
-	//one pointer for the shader manager class which will overwrite all the other seperate shader pointers 
-	ShaderManagerClass* m_ShaderManager;
-
+	ShaderManagerClass* m_pShaderManager;
 	RenderTextureClass *m_RefractionTexture, *m_ReflectionTexture;
 };
 
