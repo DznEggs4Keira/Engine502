@@ -376,8 +376,8 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	// Get the position of the camera.
 	cameraPosition = m_Camera->GetPosition();
 
-	// i'm hoping this squashes the sphere when rendereing through the skysphere shader
-	modelScaleMatrix = XMMatrixScaling(500.0f, 100.0f, 500.0f);
+	//modelScaleMatrix = XMMatrixScaling(500.0f, 100.0f, 500.0f);
+	modelScaleMatrix = XMMatrixScaling(100.0f, 100.0f, 100.0f);
 	// Translate the sky sphere to be centered around the camera position.
 	modelTranslateMatrix = XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	worldMatrix = XMMatrixMultiply(modelScaleMatrix, modelTranslateMatrix);
@@ -407,6 +407,9 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
+
+	modelTranslateMatrix = XMMatrixTranslation(0.0f, -10.0f, 0.0f);
+	worldMatrix = XMMatrixMultiply(worldMatrix, modelTranslateMatrix);
 
 	// Render the terrain buffers.
 	m_pModelManager->RenderTerrain();

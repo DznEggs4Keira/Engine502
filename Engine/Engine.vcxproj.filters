@@ -31,15 +31,21 @@
     <Filter Include="Models\Source">
       <UniqueIdentifier>{8d519da6-1c04-4eff-9bf6-25348def1ea5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Movement">
+      <UniqueIdentifier>{1825877e-926e-4621-b3d8-a01bb8e23644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Movement\Header">
+      <UniqueIdentifier>{b6fc087b-1609-432c-9eed-4447dfcb2130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Movement\Source">
+      <UniqueIdentifier>{2246dd5c-be02-47be-bb37-f0585fece075}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cameraclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="d3dclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="inputclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="lightclass.cpp">
@@ -52,12 +58,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sound.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameTime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Movement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rendertextureclass.cpp">
@@ -87,9 +87,6 @@
     <ClCompile Include="watershaderclass.cpp">
       <Filter>Shaders\Source</Filter>
     </ClCompile>
-    <ClCompile Include="modelclass.cpp">
-      <Filter>Models\Source</Filter>
-    </ClCompile>
     <ClCompile Include="skySphere.cpp">
       <Filter>Models\Source</Filter>
     </ClCompile>
@@ -108,15 +105,21 @@
     <ClCompile Include="ModelManagerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FrameTime.cpp">
+      <Filter>Movement\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="inputclass.cpp">
+      <Filter>Movement\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Movement.cpp">
+      <Filter>Movement\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cameraclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="d3dclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inputclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lightclass.h">
@@ -129,12 +132,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sound.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Movement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rendertextureclass.h">
@@ -161,9 +158,6 @@
     <ClInclude Include="watershaderclass.h">
       <Filter>Shaders\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="modelclass.h">
-      <Filter>Models\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="skySphere.h">
       <Filter>Models\Headers</Filter>
     </ClInclude>
@@ -184,6 +178,15 @@
     </ClInclude>
     <ClInclude Include="ModelManagerClass.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameTime.h">
+      <Filter>Movement\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="inputclass.h">
+      <Filter>Movement\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Movement.h">
+      <Filter>Movement\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

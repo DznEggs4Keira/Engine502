@@ -52,7 +52,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	}
 
 	//Initialise the Terrain object
-	if (FAILED(result = m_Terrain->Initialize(m_pDevice, "../Engine/data/Textures/heightmap01.bmp", L"../Engine/data/Textures/dirt01.dds", "../Engine/data/Textures/colorm01.bmp")))
+	if (FAILED(result = m_Terrain->Initialize(m_pDevice, "../Engine/data/Textures/Heightmap_Rocky.bmp", L"../Engine/data/Textures/grass.dds", "../Engine/data/Textures/colorm01.bmp")))
 	{
 		MessageBox(hwnd, L"Could not Initialize Terrain", L"Error", MB_OK);
 		return false;
@@ -66,7 +66,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	}
 
 	//Initialise Tree
-	if (FAILED(result = m_pTree->Initialize(m_pDevice, "../Engine/data/Models/TiltedTree.obj", L"../Engine/data/Textures/seafloor.dds")))
+	if (FAILED(result = m_pTree->Initialize(m_pDevice, "../Engine/data/Models/TiltedTree.obj", L"../Engine/data/Textures/bark.dds")))
 	{
 		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
 		return false;
@@ -97,7 +97,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	}
 
 	// Initialize the sky dome object.
-	if (FAILED(result = m_SkySphere->Initialize(m_pDevice, L"../Engine/data/Textures/skyMap.dds")))
+	if (FAILED(result = m_SkySphere->Initialize(m_pDevice, L"../Engine/data/Textures/Skyrim.dds")))
 	{
 		MessageBox(hwnd, L"Could not initialize the sky dome object.", L"Error", MB_OK);
 		return false;
@@ -111,7 +111,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	}
 
 	// Initialize the water object.
-	if (FAILED(result = m_Water->Initialize(m_pDevice, L"../Engine/data/Textures/waternormal.dds", 0.5f, 30.0f)))
+	if (FAILED(result = m_Water->Initialize(m_pDevice, L"../Engine/data/Textures/waternormal.dds", 3.0f, 30.0f)))
 	{
 		MessageBox(hwnd, L"Could not initialize the water object.", L"Error", MB_OK);
 		return false;
