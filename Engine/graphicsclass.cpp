@@ -408,7 +408,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
-	modelTranslateMatrix = XMMatrixTranslation(0.0f, -10.0f, 0.0f);
+	modelTranslateMatrix = XMMatrixTranslation(0.0f, -15.0f, 0.0f);
 	worldMatrix = XMMatrixMultiply(worldMatrix, modelTranslateMatrix);
 
 	// Render the terrain buffers.
@@ -424,6 +424,27 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 		return false;
 	}
 
+	// Reset the world matrix.
+	worldMatrix = m_D3D->GetWorldMatrix();
+
+	modelScaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
+	modelTranslateMatrix = XMMatrixTranslation(10.0f, -5.0f, 0.0f);
+	worldMatrix = XMMatrixMultiply(XMMatrixMultiply(modelScaleMatrix, modelTranslateMatrix), worldMatrix);
+
+	// Render the terrain buffers.
+	m_pModelManager->RenderTerrWater();
+
+	// Render the terrain using the terrain shader.
+	result = m_pShaderManager->RenderTerrainShader(m_D3D->GetDeviceContext(), m_pModelManager->m_TerrWater->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(), m_pModelManager->m_TerrWater->GetTexture());
+
+	//check if terrain rendered successfully
+	if (!result)
+	{
+		return false;
+	}
+
+	/*
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();
 
@@ -446,6 +467,7 @@ bool GraphicsClass::Render(float rotation, float deltavalue)
 	{
 		return false;
 	}
+	*/
 
 	// Reset the world matrix.
 	worldMatrix = m_D3D->GetWorldMatrix();

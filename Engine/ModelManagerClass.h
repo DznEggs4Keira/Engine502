@@ -25,6 +25,8 @@ public:
 
 	void ModelManagerClass::RenderTerrain()	{ m_Terrain->Render(m_pDeviceContext); }
 
+	void ModelManagerClass::RenderTerrWater() { m_TerrWater->Render(m_pDeviceContext); }
+
 	void ModelManagerClass::RenderSkySphere() { m_SkySphere->Render(m_pDeviceContext); }
 
 	void ModelManagerClass::RenderAssimpModel(AssimpModelClass*);
@@ -33,6 +35,7 @@ public:
 	std::vector<AssimpModelClass*> m_Tree, m_Polyhedron;
 	WaterClass* m_Water;
 	TerrainClass* m_Terrain;
+	TerrainClass* m_TerrWater;
 	skySphere* m_SkySphere;
 
 private:

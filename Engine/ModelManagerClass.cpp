@@ -5,6 +5,7 @@ ModelManagerClass::ModelManagerClass()
 	m_SkySphere = nullptr;
 	m_Terrain = nullptr;
 	m_Water = nullptr;
+	m_TerrWater = nullptr; 
 }
 
 ModelManagerClass::ModelManagerClass(const ModelManagerClass &)
@@ -23,18 +24,25 @@ ModelManagerClass::~ModelManagerClass()
 	// Release the sky dome object.
 	SAFE_DELETE(m_SkySphere)
 
+	/*
 	// Release Assimp Models
 	for each (AssimpModelClass* p in m_Tree)
 	{
-		delete p;
-		p = 0;
+		SAFE_DELETE(p)
 	}
 
 	for each (AssimpModelClass* p in m_Polyhedron)
 	{
-		delete p;
-		p = 0;
+		SAFE_DELETE(p)
 	}
+	*/
+	AssimpModelClass* p;
+	SAFE_DELETE_VECTOR(p, m_Tree)
+	SAFE_DELETE_VECTOR(p, m_Polyhedron)
+
+
+	//Release the terrain object.
+	SAFE_DELETE(m_TerrWater)
 }
 
 bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* deviceContext, HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight)
@@ -45,6 +53,20 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	m_pDeviceContext = deviceContext;
 
 	// Create the Terrain object.
+	m_TerrWater = new TerrainClass;
+	if (!m_TerrWater)
+	{
+		return false;
+	}
+
+	//Initialise the Terrain object
+	if (FAILED(result = m_TerrWater->Initialize(m_pDevice, "../Engine/data/Textures/Heightmap_Island.bmp", L"../Engine/data/Textures/seamelessWater.dds", "../Engine/data/Textures/colorm01.bmp")))
+	{
+		MessageBox(hwnd, L"Could not Initialize Terrain", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the Terrain object.
 	m_Terrain = new TerrainClass;
 	if (!m_Terrain)
 	{
@@ -52,7 +74,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	}
 
 	//Initialise the Terrain object
-	if (FAILED(result = m_Terrain->Initialize(m_pDevice, "../Engine/data/Textures/Heightmap_Rocky.bmp", L"../Engine/data/Textures/grass.dds", "../Engine/data/Textures/colorm01.bmp")))
+	if (FAILED(result = m_Terrain->Initialize(m_pDevice, "../Engine/data/Textures/Heightmap_Billow.bmp", L"../Engine/data/Textures/dirt01.dds", "../Engine/data/Textures/colorm01.bmp")))
 	{
 		MessageBox(hwnd, L"Could not Initialize Terrain", L"Error", MB_OK);
 		return false;
@@ -97,7 +119,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	}
 
 	// Initialize the sky dome object.
-	if (FAILED(result = m_SkySphere->Initialize(m_pDevice, L"../Engine/data/Textures/Skyrim.dds")))
+	if (FAILED(result = m_SkySphere->Initialize(m_pDevice, L"../Engine/data/Textures/DysDesert.dds")))
 	{
 		MessageBox(hwnd, L"Could not initialize the sky dome object.", L"Error", MB_OK);
 		return false;
