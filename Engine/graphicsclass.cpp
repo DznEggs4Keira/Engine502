@@ -63,7 +63,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	// Initialize the Direct3D object.
 	if(FAILED(result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR)))
 	{
-		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize Direct3D.");
 		return false;
 	}
 
@@ -77,7 +77,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	// Initialize theShader Manager object.
 	if(FAILED(result = m_pShaderManager->Initialize(m_D3D->GetDevice(), hwnd)))
 	{
-		MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize the shader manager object.");
 		return false;
 	}
 
@@ -118,7 +118,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	// Initialize the refraction render to texture object.
 	if(FAILED(result = m_RefractionTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR)))
 	{
-		MessageBox(hwnd, L"Could not initialize the refraction render to texture object.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize the refraction render to texture object.");
 		return false;
 	}
 
@@ -132,7 +132,7 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 	// Initialize the reflection render to texture object.
 	if(FAILED(result = m_ReflectionTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR)))
 	{
-		MessageBox(hwnd, L"Could not initialize the reflection render to texture object.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize the reflection render to texture object.");
 		return false;
 	}
 
@@ -142,10 +142,9 @@ bool GraphicsClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, 
 		return false;
 	}
 
-	result = m_pModelManager->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hinstance, hwnd, screenWidth, screenHeight);
-	if (FAILED(result))
+	if (FAILED(result = m_pModelManager->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hinstance, hwnd, screenWidth, screenHeight)))
 	{
-		MessageBox(hwnd, L"Could not initialize the Models.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize the Models.");
 		return false;
 	}
 

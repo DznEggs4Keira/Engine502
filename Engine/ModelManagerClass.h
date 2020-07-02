@@ -9,6 +9,7 @@
 
 //Utils
 #include "Utils.h"
+#include "ErrorLogger.h"
 
 class ModelManagerClass
 {

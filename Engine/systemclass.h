@@ -13,7 +13,9 @@
 #include "graphicsclass.h"
 #include "Sound.h"
 #include "inputclass.h"
+
 #include "Utils.h"
+#include "ErrorLogger.h"
 
 class SystemClass
 {

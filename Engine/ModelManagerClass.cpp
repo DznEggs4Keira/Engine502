@@ -23,23 +23,11 @@ ModelManagerClass::~ModelManagerClass()
 
 	// Release the sky dome object.
 	SAFE_DELETE(m_SkySphere)
-
-	/*
-	// Release Assimp Models
-	for each (AssimpModelClass* p in m_Tree)
-	{
-		SAFE_DELETE(p)
-	}
-
-	for each (AssimpModelClass* p in m_Polyhedron)
-	{
-		SAFE_DELETE(p)
-	}
-	*/
+	
+	//Release the assimp objects
 	AssimpModelClass* p;
 	SAFE_DELETE_VECTOR(p, m_Tree)
 	SAFE_DELETE_VECTOR(p, m_Polyhedron)
-
 
 	//Release the terrain object.
 	SAFE_DELETE(m_TerrWater)
@@ -52,17 +40,18 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	m_pDevice = device;
 	m_pDeviceContext = deviceContext;
 
-	// Create the Terrain object.
+	// Create the Water object.
 	m_TerrWater = new TerrainClass;
 	if (!m_TerrWater)
 	{
 		return false;
 	}
 
-	//Initialise the Terrain object
-	if (FAILED(result = m_TerrWater->Initialize(m_pDevice, "../Engine/data/Textures/Heightmap_Island.bmp", L"../Engine/data/Textures/seamelessWater.dds", "../Engine/data/Textures/colorm01.bmp")))
+	//Initialise the Water object
+	if (FAILED(result = m_TerrWater->Initialize(m_pDevice, "../Engine/data/Textures/Heightmap_Island.bmp", 
+		L"../Engine/data/Textures/seamelessWater.dds", "../Engine/data/Textures/colorm01.bmp")))
 	{
-		MessageBox(hwnd, L"Could not Initialize Terrain", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not Initialize Water");
 		return false;
 	}
 
@@ -74,9 +63,10 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	}
 
 	//Initialise the Terrain object
-	if (FAILED(result = m_Terrain->Initialize(m_pDevice, "../Engine/data/Textures/Heightmap_Billow.bmp", L"../Engine/data/Textures/dirt01.dds", "../Engine/data/Textures/colorm01.bmp")))
+	if (FAILED(result = m_Terrain->Initialize(m_pDevice, "../Engine/data/Textures/Heightmap_Billow.bmp", 
+		L"../Engine/data/Textures/dirt01.dds", "../Engine/data/Textures/colorm01.bmp")))
 	{
-		MessageBox(hwnd, L"Could not Initialize Terrain", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not Initialize Terrain");
 		return false;
 	}
 
@@ -90,7 +80,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	//Initialise Tree
 	if (FAILED(result = m_pTree->Initialize(m_pDevice, "../Engine/data/Models/TiltedTree.obj", L"../Engine/data/Textures/bark.dds")))
 	{
-		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize the Tree test object.");
 		return false;
 	}
 
@@ -105,7 +95,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	}
 	if (FAILED(result = m_pPolyhedron->Initialize(m_pDevice, "../Engine/data/Models/polyhedronBall.obj", L"../Engine/data/Textures/seafloor.dds")))
 	{
-		MessageBox(hwnd, L"Could not initialize the Polyhedron test object.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize the Polyhedron test object.");
 		return false;
 	}
 
@@ -121,7 +111,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	// Initialize the sky dome object.
 	if (FAILED(result = m_SkySphere->Initialize(m_pDevice, L"../Engine/data/Textures/DysDesert.dds")))
 	{
-		MessageBox(hwnd, L"Could not initialize the sky dome object.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize the sky dome object.");
 		return false;
 	}
 
@@ -135,7 +125,7 @@ bool ModelManagerClass::Initialize(ID3D11Device* device , ID3D11DeviceContext* d
 	// Initialize the water object.
 	if (FAILED(result = m_Water->Initialize(m_pDevice, L"../Engine/data/Textures/waternormal.dds", 3.0f, 30.0f)))
 	{
-		MessageBox(hwnd, L"Could not initialize the water object.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize the water object.");
 		return false;
 	}
 	return true;

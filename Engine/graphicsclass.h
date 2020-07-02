@@ -17,7 +17,7 @@
 
 //Utils
 #include "Utils.h"
-
+#include "ErrorLogger.h"
 
 // GLOBALS 
 const bool FULL_SCREEN = false;

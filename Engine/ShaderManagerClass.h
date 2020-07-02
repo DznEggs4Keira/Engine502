@@ -17,6 +17,9 @@
 #include "terrainshaderclass.h"
 #include "watershaderclass.h"
 
+#include "Utils.h"
+#include "ErrorLogger.h"
+
 class ShaderManagerClass
 {
 public:

@@ -20,44 +20,19 @@ ShaderManagerClass::ShaderManagerClass(const ShaderManagerClass& other)
 ShaderManagerClass::~ShaderManagerClass()
 {
 	//Release the Reflection Shader object.
-	if (m_ReflectionShader)
-	{
-		m_ReflectionShader->Shutdown();
-		delete m_ReflectionShader;
-		m_ReflectionShader = 0;
-	}
+	SAFE_SHUTDOWN(m_ReflectionShader);
 
 	// Release the water shader object.
-	if (m_WaterShader)
-	{
-		m_WaterShader->Shutdown();
-		delete m_WaterShader;
-		m_WaterShader = 0;
-	}
+	SAFE_SHUTDOWN(m_WaterShader);
 
 	// Release the terrain shader object.
-	if (m_TerrainShader)
-	{
-		m_TerrainShader->Shutdown();
-		delete m_TerrainShader;
-		m_TerrainShader = 0;
-	}
+	SAFE_SHUTDOWN(m_TerrainShader);
 
 	// Release the sky sphere shader object.
-	if (m_SkySphereShader)
-	{
-		m_SkySphereShader->Shutdown();
-		delete m_SkySphereShader;
-		m_SkySphereShader = 0;
-	}
+	SAFE_SHUTDOWN(m_SkySphereShader);
 
 	// Release the light shader object.
-	if (m_LightShader)
-	{
-		m_LightShader->Shutdown();
-		delete m_LightShader;
-		m_LightShader = 0;
-	}
+	SAFE_SHUTDOWN(m_LightShader);
 }
 
 bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
@@ -75,7 +50,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = m_LightShader->Initialize(device, hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
+		ErrorLogger::Log("Could not initialize the light shader object.");
 		return false;
 	}
 
@@ -90,7 +65,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = m_SkySphereShader->Initialize(device, hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the sky sphere shader object.", L"Error", MB_OK);
+		ErrorLogger::Log("Could not initialize the sky sphere shader object.");
 		return false;
 	}
 
@@ -105,7 +80,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = m_TerrainShader->Initialize(device, hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the terrain shader object.", L"Error", MB_OK);
+		ErrorLogger::Log("Could not initialize the terrain shader object.");
 		return false;
 	}
 
@@ -120,7 +95,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = m_WaterShader->Initialize(device, hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the water shader object.", L"Error", MB_OK);
+		ErrorLogger::Log("Could not initialize the water shader object.");
 		return false;
 	}
 
@@ -135,7 +110,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = m_ReflectionShader->Initialize(device, hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the Reflection shader object.", L"Error", MB_OK);
+		ErrorLogger::Log("Could not initialize the Reflection shader object.");
 		return false;
 	}
 

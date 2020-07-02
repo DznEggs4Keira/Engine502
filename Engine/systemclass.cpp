@@ -52,7 +52,7 @@ bool SystemClass::Initialize()
 
 	if(FAILED(result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight)))
 	{
-		MessageBox(m_hwnd, L"Could not initialize Input.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize Input.");
 		return false;
 	}
 
@@ -66,7 +66,7 @@ bool SystemClass::Initialize()
 	// Initialize the sound object.
 	if(FAILED(result = m_Sound->Initialize(m_hwnd)))
 	{
-		MessageBox(m_hwnd, L"Could not initialize Direct Sound.", L"Error", MB_OK);
+		ErrorLogger::Log(result, "Could not initialize Direct Sound.");
 		return false;
 	}
 
@@ -80,6 +80,7 @@ bool SystemClass::Initialize()
 	// Initialize the graphics object.
 	if(FAILED(result = m_Graphics->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight)))
 	{
+		ErrorLogger::Log(result, "Could not initialize Direct Graphics.");
 		return false;
 	}
 
